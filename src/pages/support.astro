@@ -1,0 +1,30 @@
+---
+import Page from '../layouts/Page.astro';
+import { links } from '../i18n/links';
+---
+
+<Page title="Support | EatMatrix" description="Help with the EatMatrix app: subscriptions, scanning, account and data questions.">
+  <section class="prose-em mx-auto max-w-3xl px-4 pt-12">
+    <h1 class="text-3xl font-extrabold">Support</h1>
+    <p>
+      Questions about EatMatrix? Email <a href={`mailto:${links.supportEmail}`}>{links.supportEmail}</a> and we’ll get back to you. Include your device
+      model and, if it helps, a photo of the label you scanned.
+    </p>
+    <h2>Subscriptions</h2>
+    <p>
+      EatMatrix subscriptions are billed through the App Store. To cancel or change a plan: open <strong>Settings → your name → Subscriptions</strong>
+      on your iPhone. Cancelling stops the next renewal; you keep access until the current period ends.
+    </p>
+    <h2>Deleting your account and data</h2>
+    <p>
+      In the app, open <strong>Account → Delete account</strong>. This removes your profile, saved allergens and preferences, and the scan history on
+      your device. Subscriptions are managed separately by Apple (see above).
+    </p>
+    <h2>Scanning tips</h2>
+    <ul>
+      <li>Fill the frame with the ingredient list; the app reads the label itself — no barcode needed.</li>
+      <li>If the label isn’t readable, point at the front of the pack: EatMatrix recognizes the product and verifies its ingredients online.</li>
+      <li>Hold steady for a second — the frame fills when a product is locked.</li>
+    </ul>
+  </section>
+</Page>

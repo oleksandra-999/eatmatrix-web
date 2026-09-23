@@ -1,0 +1,175 @@
+---
+import Page from '../layouts/Page.astro';
+import FramerImage from '../components/ui/FramerImage.astro';
+import Icon from '../components/ui/Icon.astro';
+import { links } from '../i18n/links';
+import data from '../data/additives.json';
+
+const total = data.additives.length;
+const rated = data.additives.filter((a) => a.verdict !== 'unknown').length;
+
+const commitments = [
+  { icon: 'cross', title: 'No ads', body: 'EatMatrix carries no advertising. No brand can pay to appear in a scan result, a verdict or an article.' },
+  {
+    icon: 'result',
+    title: 'No brand influence',
+    body: 'A verdict comes from what EFSA, the FDA and WHO/JECFA concluded about an additive. No manufacturer can pay to change it, and every flag links to the opinion behind it.',
+  },
+  { icon: 'shield', title: 'Your data stays yours', body: 'Scans and account data are used to run the app for you. We do not sell them, and we never share them with brands.' },
+  {
+    icon: 'check',
+    title: 'Transparent funding',
+    body: 'EatMatrix is paid for by the people who use it. Revenue comes from subscriptions, never from the companies whose products we scan.',
+  },
+] as const;
+const iconBox: Record<string, string> = { cross: '0 0 24 24', result: '0 0 20 20', shield: '0 0 20 20', check: '0 0 20 20' };
+
+const funding = [
+  { label: 'Subscriptions', value: 'All of it', all: true },
+  { label: 'Payments from brands or manufacturers', value: 'None', all: false },
+  { label: 'Advertising', value: 'None', all: false },
+  { label: 'Affiliate commissions on products', value: 'None', all: false },
+];
+
+const steps = [
+  { title: 'You scan the label', body: 'The app reads the ingredient list on the pack, not a marketing claim on the front.' },
+  {
+    title: 'Each additive is looked up',
+    body: `Every ingredient is matched against our database of ${total} additives, with the published EFSA, FDA and WHO/JECFA evaluations attached.`,
+  },
+  {
+    title: 'The most cautious regulator wins',
+    body: 'When regulators disagree, the verdict follows the most cautious position, and the source is one tap away.',
+  },
+];
+---
+
+<Page
+  title="Independence | EatMatrix"
+  description="EatMatrix is paid for by its users. No ads, no brand influence, no data selling. Here is how the app is funded and how a verdict is made."
+>
+  <div class="mx-auto max-w-6xl px-4 lg:px-8">
+    <section class="pt-16 text-center lg:pt-24">
+      <h1 class="text-[38px] leading-[1.1] font-semibold lg:text-[64px]">Our core value is<br /><span class="serif">independence</span></h1>
+      <p class="mx-auto mt-6 max-w-2xl text-[18px] leading-snug text-muted lg:text-[20px]">
+        EatMatrix exists to tell you what regulators actually concluded about what is in your food. For that answer to be worth anything, nobody but
+        you can be paying for it.
+      </p>
+      <div class="relative mx-auto mt-12 max-w-md">
+        <div class="overflow-hidden rounded-[40px] bg-lavender-soft">
+          <FramerImage name="comparisonApp" alt="" width={448} loading="eager" class="w-full" />
+        </div>
+        <span
+          class="absolute -bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-yellow px-6 py-3 text-[13px] font-bold tracking-[0.1em] whitespace-nowrap text-plum uppercase shadow-[0_4px_20px_rgba(0,0,0,0.08)]"
+          >100% independent</span
+        >
+      </div>
+    </section>
+
+    <section class="pt-24 lg:pt-32">
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
+        {
+          commitments.map((c) => (
+            <div class="rounded-[32px] bg-white p-6 shadow-[0_2px_16px_rgba(0,0,0,0.05)]">
+              <div class="flex h-12 w-12 items-center justify-center rounded-full bg-lavender text-purple">
+                <Icon name={c.icon} viewBox={iconBox[c.icon]} class="h-6 w-6" />
+              </div>
+              <h2 class="mt-5 text-[20px] leading-tight font-semibold">{c.title}</h2>
+              <p class="mt-2 text-[15px] leading-relaxed text-muted">{c.body}</p>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="mt-24 rounded-[40px] bg-lavender px-6 py-14 text-center lg:mt-32 lg:px-12 lg:py-20">
+      <h2 class="text-[30px] leading-tight font-semibold lg:text-[44px]">Transparent <span class="serif">funding</span></h2>
+      <p class="mx-auto mt-4 max-w-xl text-[18px] leading-snug text-ink/80 lg:text-[20px]">Revenue comes from users, never from brands.</p>
+      <div class="mx-auto mt-10 max-w-xl overflow-hidden rounded-[32px] bg-white text-left">
+        {
+          funding.map((row, i) => (
+            <div class:list={['flex items-center justify-between gap-4 px-6 py-4', i > 0 && 'border-t border-line/60']}>
+              <span class="text-[16px] font-semibold">{row.label}</span>
+              <span class:list={['rounded-full px-4 py-1.5 text-[13px] font-bold', row.all ? 'bg-purple text-white' : 'bg-grey text-muted']}>{row.value}</span>
+            </div>
+          ))
+        }
+      </div>
+      <p class="mx-auto mt-6 max-w-xl text-[14px] text-ink/70">
+        The only way to pay EatMatrix is to subscribe. That is what keeps a verdict about a product independent of the company that makes it.
+      </p>
+    </section>
+
+    <section class="pt-24 text-center lg:pt-32">
+      <h2 class="text-[30px] leading-tight font-semibold lg:text-[44px]">How a verdict is <span class="serif">made</span></h2>
+      <p class="mx-auto mt-4 max-w-2xl text-[18px] leading-snug text-muted lg:text-[20px]">
+        No secret formula. A verdict is a regulator's published position, surfaced at the moment you need it.
+      </p>
+      <div class="mt-10 rounded-[32px] bg-white p-6 text-left shadow-[0_2px_16px_rgba(0,0,0,0.05)] lg:p-10">
+        <ol class="grid gap-8 lg:grid-cols-3">
+          {
+            steps.map((s, i) => (
+              <li>
+                <span class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-plum text-[15px] font-bold text-white">{i + 1}</span>
+                <h3 class="mt-4 text-[20px] leading-tight font-semibold">{s.title}</h3>
+                <p class="mt-2 text-[15px] leading-relaxed text-muted">{s.body}</p>
+              </li>
+            ))
+          }
+        </ol>
+        <div class="mt-8 flex flex-col items-start gap-3 rounded-[24px] bg-grey p-5 sm:flex-row sm:items-center sm:justify-between">
+          <p class="text-[15px] text-ink/80">
+            <strong class="font-semibold">{rated}</strong> of {total} additives carry a published regulator evaluation today. The rest are shown as "not yet
+            rated", never guessed.
+          </p>
+          <a href="/additives" class="shrink-0 rounded-full bg-lavender px-5 py-2.5 text-[14px] font-semibold text-purple">Browse the encyclopedia</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="pt-24 lg:pt-32">
+      <div class="text-center">
+        <h2 class="text-[30px] leading-tight font-semibold lg:text-[44px]">Ways to <span class="serif">support</span> EatMatrix</h2>
+        <p class="mx-auto mt-4 max-w-xl text-[18px] leading-snug text-muted lg:text-[20px]">Two things keep the project independent.</p>
+      </div>
+      <div class="mt-10 grid gap-4 lg:grid-cols-2 lg:gap-8">
+        <div class="flex gap-5 rounded-[32px] bg-pink p-6 lg:p-8">
+          <span class="serif text-[56px] leading-none text-red" aria-hidden="true">1</span>
+          <div>
+            <h3 class="text-[20px] font-semibold">Subscribe</h3>
+            <p class="mt-2 text-[15px] leading-relaxed text-ink/80">
+              A subscription unlocks unlimited scans and personalised inflammation alerts, and it is the entire budget behind the database, the research
+              and the app. Start with a free trial and cancel any time.
+            </p>
+            <a href="/#pricing" class="mt-4 inline-block rounded-full bg-plum px-5 py-2.5 text-[14px] font-semibold text-white">See plans</a>
+          </div>
+        </div>
+        <div class="flex gap-5 rounded-[32px] bg-white p-6 shadow-[0_2px_16px_rgba(0,0,0,0.05)] lg:p-8">
+          <span class="serif text-[56px] leading-none text-purple" aria-hidden="true">2</span>
+          <div>
+            <h3 class="text-[20px] font-semibold">Tell us when we are wrong</h3>
+            <p class="mt-2 text-[15px] leading-relaxed text-ink/80">
+              A regulator updates an opinion, a manufacturer reformulates a product, a scan misreads a label. Every report is checked against the primary
+              source and the database is corrected, not argued with.
+            </p>
+            <a href={`mailto:${links.supportEmail}`} class="mt-4 inline-block rounded-full bg-lavender px-5 py-2.5 text-[14px] font-semibold text-purple"
+              >{links.supportEmail}</a
+            >
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="mt-24 rounded-[40px] bg-plum px-6 py-14 text-center text-white lg:mt-32 lg:px-12 lg:py-20">
+      <Icon name="logo-mark" viewBox="0 0 130 86" class="mx-auto h-14 w-auto text-yellow" />
+      <h2 class="mt-6 text-[30px] leading-tight font-semibold lg:text-[44px]">A small, <span class="serif">committed</span> team</h2>
+      <p class="mx-auto mt-4 max-w-2xl text-[18px] leading-snug text-white/85 lg:text-[20px]">
+        EatMatrix is built by MAXHUMAN, MB, a small team in Lithuania that reads regulatory opinions so you do not have to. No investors from the food
+        industry, no brand partnerships, no sponsored verdicts.
+      </p>
+      <a href={links.support} class="mt-8 inline-block rounded-2xl bg-yellow px-10 py-5 text-[16px] font-bold tracking-[0.06em] text-plum uppercase"
+        >Get in touch</a
+      >
+    </section>
+  </div>
+</Page>
