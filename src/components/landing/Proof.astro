@@ -1,0 +1,16 @@
+---
+import type { LandingCopy } from '../../i18n/landing';
+import FramerImage from '../ui/FramerImage.astro';
+interface Props { t: LandingCopy }
+const { t } = Astro.props;
+---
+
+<section class="pt-8 lg:relative lg:pt-20">
+  <FramerImage name="result" alt={t.proof.aisleAlt} width={1088} class="w-full rounded-[40px] lg:h-[620px] lg:object-cover lg:object-[50%_38%]" />
+  <FramerImage
+    name="comparisonHeader"
+    alt={t.proof.quoteAlt}
+    width={440}
+    class="mt-4 w-full rounded-2xl lg:absolute lg:bottom-8 lg:left-8 lg:mt-0 lg:w-[440px] lg:shadow-[0_12px_40px_rgba(0,0,0,0.25)]"
+  />
+</section>

@@ -1,36 +1,41 @@
 ---
 import type { LandingCopy } from '../../i18n/landing';
-import Section from '../ui/Section.astro';
+import Icon from '../ui/Icon.astro';
+import Rich from '../ui/Rich.astro';
 interface Props { t: LandingCopy }
 const { t } = Astro.props;
-const ing = t.ingredients;
+const g = t.ingredients;
 ---
 
-<Section>
-  <div class="mx-auto max-w-3xl text-center">
-    <h2 class="text-3xl font-extrabold tracking-tight text-balance sm:text-5xl">{ing.title}</h2>
-    <p class="mt-4 text-lg text-muted">{ing.intro}</p>
+<section class="pt-24 text-center lg:pt-36">
+  <h2 class="text-[30px] leading-tight font-semibold lg:text-[44px]">
+    <Rich text={g.titleLine1} /><br />{g.titleLine2}
+  </h2>
+  <p class="mx-auto mt-4 text-[18px] leading-snug text-muted lg:max-w-2xl lg:text-[20px]">{g.intro}</p>
+  <div class="relative mt-8 rounded-[32px] border border-line/60 bg-grey p-4 pb-0 lg:mt-12 lg:p-10 lg:pb-0">
+    <div class="max-h-[560px] space-y-6 overflow-hidden [mask-image:linear-gradient(to_bottom,black_70%,transparent)] lg:grid lg:max-h-none lg:grid-cols-3 lg:gap-10 lg:space-y-0 lg:[mask-image:none]">
+      {
+        g.groups.map((group) => (
+          <div>
+            <span class="inline-flex items-center gap-2 rounded-full bg-pink px-4 py-2 text-[12px] font-bold tracking-[0.08em] text-red uppercase">
+              <Icon name="dot" viewBox="0 0 10 10" class="h-3 w-3" />
+              {group.title}
+            </span>
+            <ul class="mt-3 space-y-1.5 text-[16px]">
+              {group.items.map((item) => (
+                <li>
+                  <b class="font-semibold">{item.name}</b>
+                  {item.effect && <span class="ml-2 text-muted">{item.effect}</span>}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+    <div class="-mt-4 mb-4 rounded-[24px] bg-white p-5 shadow-[0_4px_20px_rgba(0,0,0,0.06)] lg:mx-auto lg:mt-10 lg:mb-8 lg:max-w-xl">
+      <div class="text-[20px] font-semibold">{g.moreCount}</div>
+      <p class="mt-1 text-[14px] text-ink/80">{g.closing}</p>
+    </div>
   </div>
-  <div class="mt-12 grid gap-6 md:grid-cols-3">
-    {
-      ing.groups.map((g) => (
-        <div class="rounded-3xl bg-surface p-6 ring-1 ring-line">
-          <h3 class="text-lg font-bold">{g.title}</h3>
-          <ul class="mt-4 divide-y divide-line">
-            {g.items.map((item) => (
-              <li class="flex items-center justify-between gap-3 py-3">
-                <span class="font-medium">{item.name}</span>
-                <span class="rounded-full bg-risk-soft px-2.5 py-1 text-xs font-semibold whitespace-nowrap text-risk">{item.effect}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))
-    }
-  </div>
-  <ul class="mt-8 flex flex-wrap justify-center gap-3">
-    {ing.more.map((m) => <li class="rounded-full bg-surface px-4 py-2 text-sm font-medium ring-1 ring-line">{m}</li>)}
-    <li class="rounded-full bg-ink px-4 py-2 text-sm font-bold text-white">{ing.moreCount}</li>
-  </ul>
-  <p class="mt-10 text-center text-xl font-bold">{ing.closing}</p>
-</Section>
+</section>

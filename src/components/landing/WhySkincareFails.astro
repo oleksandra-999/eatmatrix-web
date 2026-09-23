@@ -1,49 +1,64 @@
 ---
 import type { LandingCopy } from '../../i18n/landing';
-import Button from '../ui/Button.astro';
 import FramerImage from '../ui/FramerImage.astro';
-import Section from '../ui/Section.astro';
+import Icon from '../ui/Icon.astro';
+import Cta from '../ui/Cta.astro';
 interface Props { t: LandingCopy }
 const { t } = Astro.props;
+const w = t.why;
 ---
 
-<Section>
-  <div class="text-center">
-    <h2 class="text-3xl font-extrabold tracking-tight sm:text-5xl">{t.why.title}</h2>
-    <p class="mt-4 text-lg text-muted">{t.why.subtitle}</p>
-  </div>
-
-  <div class="mt-12 grid gap-6 md:grid-cols-3">
-    <div class="rounded-3xl bg-risk-soft p-6">
-      <h3 class="text-xl font-bold">{t.why.triggerTitle}</h3>
-      <FramerImage name="theTrigger" alt={t.why.triggerTitle} class="mx-auto mt-6 w-40" width={244} />
+<section class="pt-24 text-center lg:pt-36">
+  <h2 class="text-[30px] leading-tight font-semibold lg:text-[44px]">{w.title}</h2>
+  <p class="mx-auto mt-3 max-w-[300px] text-[18px] leading-snug text-muted lg:max-w-none lg:text-[20px]">{w.subtitle}</p>
+  <div class="lg:mt-12 lg:grid lg:grid-cols-2 lg:items-stretch lg:gap-8 lg:text-left">
+    <div class="mt-8 rounded-[32px] bg-white p-6 shadow-[0_2px_16px_rgba(0,0,0,0.04)] lg:mt-0 lg:w-[420px] lg:justify-self-end lg:p-8">
+      <div class="relative grid grid-cols-2 gap-y-8">
+        <div class="flex flex-col items-start gap-3">
+          <div class="grid h-36 w-36 place-items-center rounded-full bg-grey">
+            <FramerImage name="blocksIt" alt="" width={128} class="w-32" />
+          </div>
+          <span class="inline-flex items-center gap-2 rounded-full bg-trigger px-4 py-2 text-[15px] font-semibold">
+            <Icon name="dot" viewBox="0 0 10 10" class="h-3 w-3" />{w.triggerTitle}
+          </span>
+        </div>
+        <div class="flex flex-col items-end gap-3 pt-14">
+          <div class="relative h-36 w-36">
+            <FramerImage name="whyIcon" alt="" width={144} class="h-36 w-36 rounded-full object-cover" />
+            <FramerImage name="whySmall" alt="" width={72} class="absolute -bottom-5 -left-2 w-[4.5rem] drop-shadow-lg" />
+          </div>
+          <span class="inline-flex items-center gap-2 rounded-full bg-pink px-4 py-2 text-[15px] font-semibold whitespace-nowrap">
+            <Icon name="block" viewBox="0 0 20 20" class="h-4 w-4" />{w.blocksTitle}
+          </span>
+        </div>
+        <div class="col-span-2 flex flex-col items-start gap-3">
+          <FramerImage name="theTrigger" alt="" width={144} class="h-36 w-36 rounded-full object-cover object-top" />
+          <span class="inline-flex items-center gap-2 rounded-full bg-lavender-soft px-4 py-2 text-[15px] font-semibold">
+            <Icon name="result" viewBox="0 0 20 20" class="h-4 w-4" />{w.resultTitle}
+          </span>
+        </div>
+        <svg class="pointer-events-none absolute inset-0 h-full w-full text-line" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="6 6" aria-hidden="true">
+          <path d="M150 60 C 200 40, 230 60, 245 100"></path>
+          <path d="M255 240 C 230 285, 190 310, 150 320"></path>
+        </svg>
+      </div>
     </div>
-    <div class="rounded-3xl bg-brand-soft p-6">
-      <h3 class="text-xl font-bold">{t.why.blocksTitle}</h3>
-      <FramerImage name="blocksIt" alt={t.why.blocksTitle} class="mx-auto mt-6 w-52" width={212} />
+    <div class="lg:flex lg:w-[420px] lg:flex-col lg:justify-center lg:justify-self-start lg:rounded-[32px] lg:bg-lavender-soft lg:p-10">
+      <h3 class="mt-10 text-[20px] font-semibold lg:mt-0 lg:text-[28px]">{w.stepsTitle}</h3>
+      <ul class="mx-auto mt-4 max-w-[300px] space-y-3 text-left text-[18px] lg:mx-0 lg:max-w-none lg:text-[20px]">
+        {
+          w.steps.map((step) => (
+            <li class="flex items-center gap-3">
+              <span class="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-purple text-white">
+                <Icon name="check" viewBox="0 0 20 20" class="h-4 w-4" />
+              </span>
+              {step}
+            </li>
+          ))
+        }
+      </ul>
+      <p class="mt-6 text-[18px] text-muted">{w.closing}</p>
+      <Cta href={w.ctaHref} class="mt-5 lg:inline-block lg:px-14">{w.cta}</Cta>
     </div>
-    <div class="rounded-3xl bg-surface p-6 ring-1 ring-line">
-      <h3 class="text-xl font-bold">{t.why.resultTitle}</h3>
-      <FramerImage name="result" alt={t.why.resultTitle} class="mx-auto mt-6 w-40" width={320} />
-    </div>
   </div>
-
-  <div class="mt-12 rounded-3xl bg-ink p-8 text-white md:p-12">
-    <h3 class="text-2xl font-bold">{t.why.stepsTitle}</h3>
-    <ol class="mt-8 grid gap-6 sm:grid-cols-2 md:grid-cols-4">
-      {
-        t.why.steps.map((step, i) => (
-          <li class="flex items-center gap-4">
-            <span class="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand font-bold">{i + 1}</span>
-            <span class="font-semibold">{step}</span>
-          </li>
-        ))
-      }
-    </ol>
-  </div>
-
-  <div class="mt-12 flex flex-col items-center gap-6 text-center">
-    <p class="text-2xl font-bold">{t.why.closing}</p>
-    <Button href={t.why.ctaHref}>{t.why.cta}</Button>
-  </div>
-</Section>
+</section>

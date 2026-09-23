@@ -1,40 +1,55 @@
 ---
 import type { LandingCopy } from '../../i18n/landing';
-import Button from '../ui/Button.astro';
 import FramerImage from '../ui/FramerImage.astro';
+import Icon from '../ui/Icon.astro';
+import Rich from '../ui/Rich.astro';
+import Cta from '../ui/Cta.astro';
 interface Props { t: LandingCopy }
 const { t } = Astro.props;
-// The strip is rendered twice so the CSS ticker loops seamlessly; the copy is hidden from assistive tech.
-const passes = [false, true];
+const h = t.hero;
 ---
 
-<section class="overflow-hidden px-4 pt-14 pb-10 sm:px-6 md:pt-20">
-  <div class="mx-auto max-w-3xl text-center">
-    <h1 class="text-4xl leading-[1.05] font-extrabold tracking-tight text-balance sm:text-6xl">
-      {t.hero.titleLine1}<br />
-      <span class="text-brand">{t.hero.titleLine2}</span>
+<section class="pt-20 text-center lg:grid lg:grid-cols-2 lg:items-center lg:gap-14 lg:pt-28 lg:text-left">
+  <div>
+    <span class="inline-flex items-center gap-2 rounded-full bg-pink px-4 py-2 text-[12px] font-bold tracking-[0.04em] text-red uppercase">
+      <Icon name="dot" viewBox="0 0 10 10" class="h-2.5 w-2.5" />{h.badge}
+    </span>
+    <h1 class="mt-6 text-[38px] leading-[1.15] font-semibold lg:text-[64px]">
+      <Rich text={h.titleLine1} /><br /><Rich text={h.titleLine2} />
     </h1>
-    <p class="mx-auto mt-6 max-w-2xl text-lg text-muted">{t.hero.body}</p>
-    <div class="mt-8 flex flex-col items-center gap-3">
-      <Button href={t.hero.ctaHref}>{t.hero.cta}</Button>
-      <p class="text-sm text-muted">{t.hero.reassurance}</p>
-    </div>
+    <p class="mt-6 text-[18px] leading-[1.5] text-muted lg:max-w-lg lg:text-[20px]">{h.body}</p>
+    <Cta href={h.ctaHref} class="mt-6 lg:inline-block lg:px-14">{h.cta}</Cta>
+    <p class="mt-3 text-[15px] text-muted">{h.reassurance}</p>
   </div>
-
-  <div class="relative mt-14 [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]">
-    <div class="ticker-track flex w-max gap-5">
-      {
-        passes.map((hidden) =>
-          t.hero.carousel.map((name) => (
-            <figure class="relative w-56 shrink-0 sm:w-64" aria-hidden={hidden ? 'true' : undefined}>
-              <FramerImage name={name} alt={hidden ? '' : `EatMatrix scan result: ${t.hero.carouselBadge}`} width={256} loading="eager" />
-              <figcaption class="absolute top-3 left-3 rounded-full bg-risk px-3 py-1 text-[11px] font-bold tracking-wide text-white shadow">
-                {t.hero.carouselBadge}
-              </figcaption>
-            </figure>
-          )),
-        )
-      }
+  <div>
+    {/* Swipeable with CSS scroll snap only; no JavaScript. */}
+    <div class="mt-6 overflow-hidden rounded-[40px] border-[6px] border-pink bg-pink lg:mt-0">
+      <div class="flex snap-x snap-mandatory overflow-x-auto scroll-smooth [scrollbar-width:none]">
+        {
+          h.carousel.map((name, i) => (
+            <div class="relative w-full shrink-0 snap-center">
+              <FramerImage
+                name={name}
+                alt={h.carouselAlt}
+                width={520}
+                loading={i === 0 ? 'eager' : 'lazy'}
+                class="aspect-[692/720] w-full rounded-[34px] object-cover"
+              />
+              <span class="absolute bottom-5 left-5 inline-flex items-center gap-2 rounded-full bg-red px-3 py-1.5 text-[11px] font-bold tracking-[0.06em] text-white uppercase">
+                <span class="h-2 w-2 rounded-full bg-white" />
+                {h.carouselBadge}
+              </span>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+    <div class="mt-6 grid grid-cols-2 divide-x divide-y divide-line/60 overflow-hidden rounded-[24px] border border-line/60 bg-white text-[12px] font-semibold tracking-[0.06em] text-ink/70 uppercase [&>div]:px-5 [&>div]:py-5">
+      <div class="flex flex-col items-center justify-center text-center">
+        <div class="serif text-[26px] tracking-normal text-ink normal-case">{t.stats.scans.value}</div>
+        {t.stats.scans.label}
+      </div>
+      {t.stats.others.map((s) => <div class="flex items-center justify-center">{s}</div>)}
     </div>
   </div>
 </section>

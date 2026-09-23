@@ -1,50 +1,67 @@
 ---
 import type { LandingCopy } from '../../i18n/landing';
-import Button from '../ui/Button.astro';
-import Section from '../ui/Section.astro';
+import Icon from '../ui/Icon.astro';
+import Cta from '../ui/Cta.astro';
 interface Props { t: LandingCopy }
 const { t } = Astro.props;
 const p = t.pricing;
 ---
 
-<Section id="pricing" class="scroll-mt-16 bg-surface">
-  <div class="text-center">
-    <h2 class="text-3xl font-extrabold tracking-tight sm:text-5xl">{p.title}</h2>
-    <p class="mt-4 text-lg text-muted">{p.subtitle}</p>
-  </div>
-  <div class="mx-auto mt-12 grid max-w-4xl gap-6 md:grid-cols-2">
+<section id="pricing" class="mt-24 scroll-mt-24 rounded-[40px] bg-lavender px-4 pt-12 pb-6 text-center lg:mt-36 lg:px-12 lg:pt-16 lg:pb-12">
+  <h2 class="text-[30px] leading-tight font-semibold">
+    {p.titleLine1}<br />
+    <span class="serif inline-flex items-center gap-2">
+      <Icon name="sparkle" viewBox="0 0 27 27" class="h-6 w-6" />{p.titleLine2}<Icon name="sparkle" viewBox="0 0 27 27" class="h-6 w-6" />
+    </span>
+  </h2>
+  <p class="mt-4 text-[18px] leading-snug text-ink/80 lg:text-[20px]">{p.subtitle}</p>
+  <div class="lg:mx-auto lg:mt-12 lg:grid lg:max-w-4xl lg:grid-cols-2 lg:items-stretch lg:gap-6">
     {
       p.plans.map((plan) => (
-        <div class:list={['relative flex flex-col rounded-3xl p-8', plan.highlighted ? 'bg-page ring-2 ring-brand' : 'bg-page ring-1 ring-line']}>
+        <div
+          class:list={[
+            'flex flex-col rounded-[32px] bg-white p-6 lg:mt-0 lg:p-8',
+            plan.highlighted ? 'mt-8 border-2 border-purple/60' : 'mt-4',
+          ]}
+        >
           {plan.badge && (
-            <p class="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-brand px-4 py-1.5 text-xs font-bold whitespace-nowrap text-brand-ink">
+            <span class="inline-flex items-center gap-2 rounded-full bg-lavender-soft px-4 py-2 text-[12px] font-bold tracking-[0.08em] text-purple uppercase">
+              <Icon name="sparkle" viewBox="0 0 27 27" class="h-4 w-4" />
               {plan.badge}
-            </p>
+            </span>
           )}
-          <h3 class="text-sm font-bold tracking-widest text-muted">{plan.name}</h3>
-          <p class="mt-4 flex items-baseline gap-1">
-            <span class="text-5xl font-extrabold tracking-tight">{plan.price}</span>
-            <span class="text-muted">{p.perMonth}</span>
-          </p>
-          <p class="mt-1 text-sm text-muted">{plan.billing}</p>
-          <ul class="mt-6 space-y-3">
+          <div class:list={['text-[12px] font-bold tracking-[0.12em] text-muted uppercase', plan.badge && 'mt-4']}>{plan.name}</div>
+          <div class="mt-1 text-[48px] leading-none font-semibold">{plan.price}</div>
+          <div class="mt-1 text-[16px]">{p.perMonth}</div>
+          <div class="text-[12px] text-muted">{plan.billing}</div>
+          <ul class="mt-5 space-y-2 pb-6 text-[16px]">
             {plan.features.map((f) => (
-              <li class="flex gap-3">
-                <span aria-hidden="true" class="font-bold text-brand">✓</span>
-                {f}
+              <li class="text-[15px]">
+                <span class="inline-flex items-center gap-2">
+                  <Icon name="check" viewBox="0 0 20 20" class="h-4 w-4 shrink-0 text-purple" />
+                  {f}
+                </span>
+              </li>
+            ))}
+            {plan.missing.map((f) => (
+              <li class="text-[15px] text-muted">
+                <span class="inline-flex items-center gap-2">
+                  <span class="text-[18px] leading-none" aria-hidden="true">✕</span>
+                  {f}
+                </span>
               </li>
             ))}
           </ul>
-          <div class="mt-8 flex flex-col gap-3 text-center">
-            <Button href={plan.ctaHref} variant={plan.highlighted ? 'primary' : 'secondary'}>{plan.cta}</Button>
-            {plan.note && <p class="text-sm text-muted">{plan.note}</p>}
-          </div>
+          <Cta href={plan.ctaHref} variant={plan.highlighted ? 'plum' : 'soft'} class="mt-6 lg:mt-auto">{plan.cta}</Cta>
+          {plan.note && <p class="mt-3 text-[13px] text-purple">{plan.note}</p>}
         </div>
       ))
     }
   </div>
-  <div class="mx-auto mt-10 max-w-2xl rounded-3xl bg-brand-soft p-6 text-center">
-    <p class="font-bold tracking-wide">{p.guaranteeTitle}</p>
-    <p class="mt-2 text-muted">{p.guaranteeBody}</p>
+  <div class="mt-4 rounded-[24px] bg-lavender-soft p-5 lg:mx-auto lg:mt-6 lg:max-w-4xl">
+    <div class="inline-flex items-center gap-2 text-[16px] font-bold">
+      <Icon name="shield" viewBox="0 0 20 20" class="h-5 w-5" />{p.guaranteeTitle}
+    </div>
+    <p class="mt-2 text-[14px] text-ink/80">{p.guaranteeBody}</p>
   </div>
-</Section>
+</section>

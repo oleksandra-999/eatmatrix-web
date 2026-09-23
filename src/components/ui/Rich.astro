@@ -1,0 +1,23 @@
+---
+/**
+ * Renders a copy string with two inline marks: **bold** and *serif* (the italic Instrument Serif accent).
+ * Keeps copy in plain strings so translators never touch HTML.
+ */
+interface Props {
+  text: string;
+}
+const { text } = Astro.props;
+const parts = text.split(/(\*\*[^*]+\*\*|\*[^*]+\*)/).filter(Boolean);
+---
+
+{
+  parts.map((part) =>
+    part.startsWith('**') ? (
+      <b>{part.slice(2, -2)}</b>
+    ) : part.startsWith('*') ? (
+      <span class="serif">{part.slice(1, -1)}</span>
+    ) : (
+      part
+    ),
+  )
+}

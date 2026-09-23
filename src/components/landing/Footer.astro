@@ -2,21 +2,44 @@
 import type { LandingCopy } from '../../i18n/landing';
 import type { Lang } from '../../i18n';
 import { links } from '../../i18n/links';
+import FramerImage from '../ui/FramerImage.astro';
+import Icon from '../ui/Icon.astro';
+import Rich from '../ui/Rich.astro';
+import Cta from '../ui/Cta.astro';
 interface Props { t: LandingCopy; lang: Lang }
 const { t, lang } = Astro.props;
-const year = new Date().getFullYear();
+const f = t.footer;
+const c = t.finalCta;
 ---
 
-<footer class="border-t border-line px-4 py-10 sm:px-6">
-  <div class="mx-auto flex max-w-6xl flex-col gap-6 md:flex-row md:items-center md:justify-between">
-    <p class="text-lg font-extrabold tracking-tight">EatMatrix <span class="text-sm font-normal text-muted">© {year}</span></p>
-    <nav aria-label="Footer" class="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted">
-      <a class="hover:text-ink" href={links.privacy}>{t.footer.privacy}</a>
-      <a class="hover:text-ink" href={links.terms}>{t.footer.terms}</a>
-      <a class="hover:text-ink" href={links.appStore} rel="noopener">{t.footer.appStore}</a>
-      <a class="hover:text-ink" href={links.instagram} rel="noopener">{t.footer.instagram}</a>
-      <a class="hover:text-ink" href={links.facebook} rel="noopener">{t.footer.facebook}</a>
-      <a class="hover:text-ink" href={lang === 'en' ? '/lt' : '/'} hreflang={lang === 'en' ? 'lt' : 'en'}>{lang === 'en' ? 'Lietuvių' : 'English'}</a>
-    </nav>
+<footer class="mx-auto mt-16 max-w-[430px] px-4 pb-4 lg:max-w-6xl lg:px-8 lg:pb-8">
+  <div class="rounded-[40px] bg-plum px-6 pt-12 pb-8 text-center text-white lg:px-16 lg:pt-20">
+    <Icon name="logo-mark" viewBox="0 0 130 86" class="mx-auto h-[86px] w-[130px]" />
+    <h2 class="mt-6 text-[38px] leading-[1.1] font-semibold lg:text-[56px]"><Rich text={c.title} /></h2>
+    <p class="mx-auto mt-4 text-[18px] leading-snug text-white/90 lg:max-w-2xl lg:text-[20px]">{c.body}</p>
+    <Cta href={c.ctaHref} variant="yellow" class="mt-7 py-5! lg:mx-auto lg:max-w-md">{c.cta}</Cta>
+    <div class="mt-8 flex items-center justify-between text-[15px]">
+      <div class="flex gap-4">
+        <a href={links.privacy}>{f.privacy}</a>
+        <a href={links.terms}>{f.terms}</a>
+      </div>
+      <div class="flex gap-3">
+        <a href={links.instagram} aria-label={f.instagram} rel="noopener">
+          <svg viewBox="0 0 24 24" class="h-6 w-6" fill="currentColor" aria-hidden="true">
+            <path d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10Zm0 8.2a3.2 3.2 0 1 1 0-6.4 3.2 3.2 0 0 1 0 6.4ZM17.4 6.6a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0ZM12 3.8c2.7 0 3 0 4 .05 2.6.1 3.9 1.4 4 4 .05 1 .05 1.3.05 4s0 3-.05 4c-.1 2.6-1.4 3.9-4 4-1 .05-1.3.05-4 .05s-3 0-4-.05c-2.6-.1-3.9-1.4-4-4-.05-1-.05-1.3-.05-4s0-3 .05-4c.1-2.6 1.4-3.9 4-4 1-.05 1.3-.05 4-.05ZM12 2C9.3 2 8.9 2 7.9 2.06 4.3 2.2 2.2 4.3 2.06 7.9 2 8.9 2 9.3 2 12s0 3.1.06 4.1c.16 3.6 2.24 5.7 5.84 5.84 1 .06 1.4.06 4.1.06s3.1 0 4.1-.06c3.6-.16 5.7-2.24 5.84-5.84.06-1 .06-1.4.06-4.1s0-3.1-.06-4.1C21.8 4.3 19.7 2.2 16.1 2.06 15.1 2 14.7 2 12 2Z"></path>
+          </svg>
+        </a>
+        <a href={links.facebook} aria-label={f.facebook} rel="noopener">
+          <svg viewBox="0 0 24 24" class="h-6 w-6" fill="currentColor" aria-hidden="true">
+            <path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.3v7A10 10 0 0 0 22 12Z"></path>
+          </svg>
+        </a>
+      </div>
+    </div>
+    <div class="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-[13px] text-white/60">
+      <a href={links.appStore} rel="noopener">{f.appStore}</a>
+      <a href={lang === 'en' ? '/lt' : '/'} hreflang={lang === 'en' ? 'lt' : 'en'}>{lang === 'en' ? 'Lietuvių' : 'English'}</a>
+    </div>
+    <FramerImage name="footerWordmark" alt={f.wordmarkAlt} width={960} class="mt-8 h-auto w-full opacity-95" />
   </div>
 </footer>

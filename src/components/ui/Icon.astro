@@ -1,0 +1,11 @@
+---
+/** One icon from <Sprite>. `name` is the sprite id without the "i-" prefix. */
+interface Props {
+  name: 'found' | 'shield' | 'logo' | 'sparkle' | 'block' | 'check' | 'logo-mark' | 'dot' | 'result' | 'cross';
+  viewBox: string;
+  class?: string;
+}
+const { name, viewBox, class: className } = Astro.props;
+---
+
+<svg viewBox={viewBox} class={className} aria-hidden="true"><use href={`#i-${name}`}></use></svg>

@@ -1,0 +1,24 @@
+---
+/** The big full-width call-to-action button used throughout the landing page. */
+interface Props {
+  href: string;
+  variant?: 'plum' | 'yellow' | 'soft';
+  class?: string;
+}
+const { href, variant = 'plum', class: className = '' } = Astro.props;
+const external = href.startsWith('http');
+---
+
+<a
+  href={href}
+  {...external ? { rel: 'noopener' } : {}}
+  class:list={[
+    'block rounded-2xl py-6 text-center text-[18px] font-bold tracking-[0.06em] uppercase',
+    variant === 'plum' && 'bg-plum text-white',
+    variant === 'yellow' && 'bg-yellow text-plum',
+    variant === 'soft' && 'border-2 border-lavender-line bg-lavender-soft text-purple',
+    className,
+  ]}
+>
+  <slot />
+</a>
