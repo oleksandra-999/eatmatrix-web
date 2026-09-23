@@ -1,0 +1,14 @@
+---
+import type { LandingCopy } from '../../i18n/landing';
+import Button from '../ui/Button.astro';
+interface Props { t: LandingCopy }
+const { t } = Astro.props;
+---
+
+<section class="px-4 pb-16 sm:px-6">
+  <div class="mx-auto max-w-6xl rounded-[2rem] bg-ink px-6 py-16 text-center text-white md:py-20">
+    <h2 class="text-3xl font-extrabold tracking-tight text-balance sm:text-5xl">{t.finalCta.title}</h2>
+    <p class="mx-auto mt-4 max-w-xl text-lg text-white/75">{t.finalCta.body}</p>
+    <Button href={t.finalCta.ctaHref} class="mt-8">{t.finalCta.cta}</Button>
+  </div>
+</section>

@@ -1,0 +1,36 @@
+---
+import type { LandingCopy } from '../../i18n/landing';
+import Section from '../ui/Section.astro';
+interface Props { t: LandingCopy }
+const { t } = Astro.props;
+const ing = t.ingredients;
+---
+
+<Section>
+  <div class="mx-auto max-w-3xl text-center">
+    <h2 class="text-3xl font-extrabold tracking-tight text-balance sm:text-5xl">{ing.title}</h2>
+    <p class="mt-4 text-lg text-muted">{ing.intro}</p>
+  </div>
+  <div class="mt-12 grid gap-6 md:grid-cols-3">
+    {
+      ing.groups.map((g) => (
+        <div class="rounded-3xl bg-surface p-6 ring-1 ring-line">
+          <h3 class="text-lg font-bold">{g.title}</h3>
+          <ul class="mt-4 divide-y divide-line">
+            {g.items.map((item) => (
+              <li class="flex items-center justify-between gap-3 py-3">
+                <span class="font-medium">{item.name}</span>
+                <span class="rounded-full bg-risk-soft px-2.5 py-1 text-xs font-semibold whitespace-nowrap text-risk">{item.effect}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))
+    }
+  </div>
+  <ul class="mt-8 flex flex-wrap justify-center gap-3">
+    {ing.more.map((m) => <li class="rounded-full bg-surface px-4 py-2 text-sm font-medium ring-1 ring-line">{m}</li>)}
+    <li class="rounded-full bg-ink px-4 py-2 text-sm font-bold text-white">{ing.moreCount}</li>
+  </ul>
+  <p class="mt-10 text-center text-xl font-bold">{ing.closing}</p>
+</Section>

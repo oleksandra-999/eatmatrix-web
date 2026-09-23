@@ -1,0 +1,57 @@
+---
+import '../styles/global.css';
+import { locales, localizePath, unlocalizePath, ogLocale, type Lang } from '../i18n';
+import { FRAMER_CDN, framerImages } from '../assets/framer/manifest';
+
+interface Props {
+  title: string;
+  description: string;
+  lang: Lang;
+  /** Absolute or root-relative OG image. Defaults to the live site's share image. */
+  ogImage?: string;
+  ogType?: 'website' | 'article';
+  noindex?: boolean;
+}
+
+const { title, description, lang, ogType = 'website', noindex = false } = Astro.props;
+// TODO: serve the OG image from this site once Framer assets are downloaded.
+const ogImage = Astro.props.ogImage ?? `${FRAMER_CDN}${framerImages.ogImage.file}`;
+const site = Astro.site!;
+const basePath = unlocalizePath(Astro.url.pathname);
+const canonical = new URL(localizePath(basePath, lang), site).href;
+const alternates = locales.map((l) => ({ lang: l, href: new URL(localizePath(basePath, l), site).href }));
+const ogImageUrl = new URL(ogImage, site).href;
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <link rel="canonical" href={canonical} />
+    {alternates.map((a) => <link rel="alternate" hreflang={a.lang} href={a.href} />)}
+    <link rel="alternate" hreflang="x-default" href={alternates[0].href} />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content="EatMatrix" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:locale" content={ogLocale[lang]} />
+    {locales.filter((l) => l !== lang).map((l) => <meta property="og:locale:alternate" content={ogLocale[l]} />)}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+    <meta name="apple-itunes-app" content="app-id=6751504815" />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

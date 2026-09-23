@@ -1,0 +1,48 @@
+@import '@fontsource-variable/inter';
+@import 'tailwindcss';
+@plugin '@tailwindcss/typography';
+
+/*
+ * Design tokens. PROVISIONAL: the live Framer CSS couldn't be read from this environment, so these are
+ * stand-ins. Swap the values here once the real palette and font are recovered; components only use tokens.
+ */
+@theme {
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+
+  --color-page: #faf8f5;
+  --color-surface: #ffffff;
+  --color-ink: #111111;
+  --color-muted: #5f5f5f;
+  --color-line: #e7e3dc;
+  --color-brand: #1f7a4d;
+  --color-brand-ink: #ffffff;
+  --color-brand-soft: #e6f2ea;
+  --color-risk: #d9342b;
+  --color-risk-soft: #fdeceb;
+  --color-todo: #b45309;
+  --color-todo-soft: #fff7e6;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-page text-ink font-sans antialiased;
+  }
+}
+
+/* Hero screenshot ticker: pure CSS, paused for people who prefer reduced motion. */
+@keyframes ticker {
+  to {
+    transform: translateX(-50%);
+  }
+}
+.ticker-track {
+  animation: ticker 40s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ticker-track {
+    animation: none;
+  }
+}

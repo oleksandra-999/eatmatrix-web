@@ -1,0 +1,32 @@
+---
+import type { LandingCopy } from '../../i18n/landing';
+import Button from '../ui/Button.astro';
+import FramerImage from '../ui/FramerImage.astro';
+import Section from '../ui/Section.astro';
+interface Props { t: LandingCopy }
+const { t } = Astro.props;
+const h = t.howItWorks;
+---
+
+<Section>
+  <div class="text-center">
+    <h2 class="text-3xl font-extrabold tracking-tight sm:text-5xl">{h.title}</h2>
+    <p class="mt-4 text-lg text-muted">{h.subtitle}</p>
+  </div>
+  <ol class="mt-12 grid gap-6 md:grid-cols-3">
+    {
+      h.steps.map((s) => (
+        <li class="rounded-3xl bg-surface p-6 ring-1 ring-line">
+          <FramerImage name={s.image} alt={s.title} width={360} />
+          <p class="mt-6 text-sm font-bold tracking-widest text-brand uppercase">{s.label}</p>
+          <h3 class="mt-1 text-2xl font-bold">{s.title}</h3>
+          <p class="mt-3 text-muted">{s.body}</p>
+        </li>
+      ))
+    }
+  </ol>
+  <div class="mt-12 flex flex-col items-center gap-6 text-center">
+    <p class="text-2xl font-bold text-balance">{h.closing}</p>
+    <Button href={h.ctaHref}>{h.cta}</Button>
+  </div>
+</Section>

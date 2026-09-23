@@ -1,0 +1,31 @@
+---
+import type { LandingCopy } from '../../i18n/landing';
+import FramerImage from '../ui/FramerImage.astro';
+import Section from '../ui/Section.astro';
+interface Props { t: LandingCopy }
+const { t } = Astro.props;
+const tm = t.testimonials;
+---
+
+<Section class="bg-surface">
+  <div class="text-center">
+    <h2 class="text-3xl font-extrabold tracking-tight sm:text-5xl">
+      {tm.titleLine1}<br /><span class="text-brand">{tm.titleLine2}</span>
+    </h2>
+    <p class="mt-4 text-lg text-muted">{tm.subtitle}</p>
+  </div>
+  <!-- Swipeable row on mobile (CSS scroll-snap, no JS), three columns on desktop. -->
+  <ul class="-mx-4 mt-12 flex snap-x snap-mandatory gap-5 overflow-x-auto px-4 pb-4 md:mx-0 md:grid md:grid-cols-3 md:overflow-visible md:px-0">
+    {
+      tm.items.map((item) => (
+        <li class="w-[80%] shrink-0 snap-center md:w-auto">
+          <figure class="h-full overflow-hidden rounded-3xl bg-page ring-1 ring-line">
+            <FramerImage name={item.image} alt={item.name} width={400} class="w-full rounded-none!" />
+            <blockquote class="p-6 text-lg font-medium">“{item.quote}”</blockquote>
+            <figcaption class="px-6 pb-6 text-sm font-semibold text-muted">— {item.name}</figcaption>
+          </figure>
+        </li>
+      ))
+    }
+  </ul>
+</Section>

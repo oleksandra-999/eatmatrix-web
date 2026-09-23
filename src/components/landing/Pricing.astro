@@ -1,0 +1,50 @@
+---
+import type { LandingCopy } from '../../i18n/landing';
+import Button from '../ui/Button.astro';
+import Section from '../ui/Section.astro';
+interface Props { t: LandingCopy }
+const { t } = Astro.props;
+const p = t.pricing;
+---
+
+<Section id="pricing" class="scroll-mt-16 bg-surface">
+  <div class="text-center">
+    <h2 class="text-3xl font-extrabold tracking-tight sm:text-5xl">{p.title}</h2>
+    <p class="mt-4 text-lg text-muted">{p.subtitle}</p>
+  </div>
+  <div class="mx-auto mt-12 grid max-w-4xl gap-6 md:grid-cols-2">
+    {
+      p.plans.map((plan) => (
+        <div class:list={['relative flex flex-col rounded-3xl p-8', plan.highlighted ? 'bg-page ring-2 ring-brand' : 'bg-page ring-1 ring-line']}>
+          {plan.badge && (
+            <p class="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-brand px-4 py-1.5 text-xs font-bold whitespace-nowrap text-brand-ink">
+              {plan.badge}
+            </p>
+          )}
+          <h3 class="text-sm font-bold tracking-widest text-muted">{plan.name}</h3>
+          <p class="mt-4 flex items-baseline gap-1">
+            <span class="text-5xl font-extrabold tracking-tight">{plan.price}</span>
+            <span class="text-muted">{p.perMonth}</span>
+          </p>
+          <p class="mt-1 text-sm text-muted">{plan.billing}</p>
+          <ul class="mt-6 space-y-3">
+            {plan.features.map((f) => (
+              <li class="flex gap-3">
+                <span aria-hidden="true" class="font-bold text-brand">✓</span>
+                {f}
+              </li>
+            ))}
+          </ul>
+          <div class="mt-8 flex flex-col gap-3 text-center">
+            <Button href={plan.ctaHref} variant={plan.highlighted ? 'primary' : 'secondary'}>{plan.cta}</Button>
+            {plan.note && <p class="text-sm text-muted">{plan.note}</p>}
+          </div>
+        </div>
+      ))
+    }
+  </div>
+  <div class="mx-auto mt-10 max-w-2xl rounded-3xl bg-brand-soft p-6 text-center">
+    <p class="font-bold tracking-wide">{p.guaranteeTitle}</p>
+    <p class="mt-2 text-muted">{p.guaranteeBody}</p>
+  </div>
+</Section>

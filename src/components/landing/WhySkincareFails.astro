@@ -1,0 +1,49 @@
+---
+import type { LandingCopy } from '../../i18n/landing';
+import Button from '../ui/Button.astro';
+import FramerImage from '../ui/FramerImage.astro';
+import Section from '../ui/Section.astro';
+interface Props { t: LandingCopy }
+const { t } = Astro.props;
+---
+
+<Section>
+  <div class="text-center">
+    <h2 class="text-3xl font-extrabold tracking-tight sm:text-5xl">{t.why.title}</h2>
+    <p class="mt-4 text-lg text-muted">{t.why.subtitle}</p>
+  </div>
+
+  <div class="mt-12 grid gap-6 md:grid-cols-3">
+    <div class="rounded-3xl bg-risk-soft p-6">
+      <h3 class="text-xl font-bold">{t.why.triggerTitle}</h3>
+      <FramerImage name="theTrigger" alt={t.why.triggerTitle} class="mx-auto mt-6 w-40" width={244} />
+    </div>
+    <div class="rounded-3xl bg-brand-soft p-6">
+      <h3 class="text-xl font-bold">{t.why.blocksTitle}</h3>
+      <FramerImage name="blocksIt" alt={t.why.blocksTitle} class="mx-auto mt-6 w-52" width={212} />
+    </div>
+    <div class="rounded-3xl bg-surface p-6 ring-1 ring-line">
+      <h3 class="text-xl font-bold">{t.why.resultTitle}</h3>
+      <FramerImage name="result" alt={t.why.resultTitle} class="mx-auto mt-6 w-40" width={320} />
+    </div>
+  </div>
+
+  <div class="mt-12 rounded-3xl bg-ink p-8 text-white md:p-12">
+    <h3 class="text-2xl font-bold">{t.why.stepsTitle}</h3>
+    <ol class="mt-8 grid gap-6 sm:grid-cols-2 md:grid-cols-4">
+      {
+        t.why.steps.map((step, i) => (
+          <li class="flex items-center gap-4">
+            <span class="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand font-bold">{i + 1}</span>
+            <span class="font-semibold">{step}</span>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+
+  <div class="mt-12 flex flex-col items-center gap-6 text-center">
+    <p class="text-2xl font-bold">{t.why.closing}</p>
+    <Button href={t.why.ctaHref}>{t.why.cta}</Button>
+  </div>
+</Section>

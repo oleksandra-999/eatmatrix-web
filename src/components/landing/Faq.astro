@@ -1,0 +1,27 @@
+---
+import type { LandingCopy } from '../../i18n/landing';
+import Section from '../ui/Section.astro';
+interface Props { t: LandingCopy }
+const { t } = Astro.props;
+---
+
+<Section inner="max-w-3xl!">
+  <h2 class="text-center text-3xl font-extrabold tracking-tight sm:text-5xl">{t.faq.title}</h2>
+  <div class="mt-10 divide-y divide-line rounded-3xl bg-surface ring-1 ring-line">
+    {
+      t.faq.items.map((item) => (
+        <details class="group px-6 py-5">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold">
+            {item.q}
+            <span aria-hidden="true" class="text-2xl leading-none text-muted transition-transform group-open:rotate-45">+</span>
+          </summary>
+          {item.a ? (
+            <p class="mt-3 text-muted">{item.a}</p>
+          ) : (
+            <p class="mt-3 rounded-lg border border-dashed border-todo/50 bg-todo-soft px-3 py-2 text-sm text-todo">{t.faq.missingAnswer}</p>
+          )}
+        </details>
+      ))
+    }
+  </div>
+</Section>

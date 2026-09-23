@@ -1,0 +1,40 @@
+---
+import Base from '../../layouts/Base.astro';
+import { landing } from '../../i18n/landing';
+import { LT_TODO_PREFIX, type Lang } from '../../i18n';
+import Nav from './Nav.astro';
+import Hero from './Hero.astro';
+import Stats from './Stats.astro';
+import WhySkincareFails from './WhySkincareFails.astro';
+import Comparison from './Comparison.astro';
+import Ingredients from './Ingredients.astro';
+import Testimonials from './Testimonials.astro';
+import HowItWorks from './HowItWorks.astro';
+import Pricing from './Pricing.astro';
+import Faq from './Faq.astro';
+import FinalCta from './FinalCta.astro';
+import Footer from './Footer.astro';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = landing[lang];
+// Keep untranslated pages out of search results until a human translation lands.
+const untranslated = JSON.stringify(t).includes(LT_TODO_PREFIX);
+---
+
+<Base title={t.meta.title} description={t.meta.description} lang={lang} noindex={untranslated}>
+  <Nav t={t} lang={lang} />
+  <main>
+    <Hero t={t} />
+    <Stats t={t} />
+    <WhySkincareFails t={t} />
+    <Comparison t={t} />
+    <Ingredients t={t} />
+    <Testimonials t={t} />
+    <HowItWorks t={t} />
+    <Pricing t={t} />
+    <Faq t={t} />
+    <FinalCta t={t} />
+  </main>
+  <Footer t={t} lang={lang} />
+</Base>

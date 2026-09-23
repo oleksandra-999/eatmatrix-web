@@ -1,0 +1,22 @@
+---
+import type { LandingCopy } from '../../i18n/landing';
+import type { Lang } from '../../i18n';
+import { links } from '../../i18n/links';
+interface Props { t: LandingCopy; lang: Lang }
+const { t, lang } = Astro.props;
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t border-line px-4 py-10 sm:px-6">
+  <div class="mx-auto flex max-w-6xl flex-col gap-6 md:flex-row md:items-center md:justify-between">
+    <p class="text-lg font-extrabold tracking-tight">EatMatrix <span class="text-sm font-normal text-muted">© {year}</span></p>
+    <nav aria-label="Footer" class="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted">
+      <a class="hover:text-ink" href={links.privacy}>{t.footer.privacy}</a>
+      <a class="hover:text-ink" href={links.terms}>{t.footer.terms}</a>
+      <a class="hover:text-ink" href={links.appStore} rel="noopener">{t.footer.appStore}</a>
+      <a class="hover:text-ink" href={links.instagram} rel="noopener">{t.footer.instagram}</a>
+      <a class="hover:text-ink" href={links.facebook} rel="noopener">{t.footer.facebook}</a>
+      <a class="hover:text-ink" href={lang === 'en' ? '/lt' : '/'} hreflang={lang === 'en' ? 'lt' : 'en'}>{lang === 'en' ? 'Lietuvių' : 'English'}</a>
+    </nav>
+  </div>
+</footer>

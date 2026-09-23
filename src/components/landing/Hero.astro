@@ -1,0 +1,40 @@
+---
+import type { LandingCopy } from '../../i18n/landing';
+import Button from '../ui/Button.astro';
+import FramerImage from '../ui/FramerImage.astro';
+interface Props { t: LandingCopy }
+const { t } = Astro.props;
+// The strip is rendered twice so the CSS ticker loops seamlessly; the copy is hidden from assistive tech.
+const passes = [false, true];
+---
+
+<section class="overflow-hidden px-4 pt-14 pb-10 sm:px-6 md:pt-20">
+  <div class="mx-auto max-w-3xl text-center">
+    <h1 class="text-4xl leading-[1.05] font-extrabold tracking-tight text-balance sm:text-6xl">
+      {t.hero.titleLine1}<br />
+      <span class="text-brand">{t.hero.titleLine2}</span>
+    </h1>
+    <p class="mx-auto mt-6 max-w-2xl text-lg text-muted">{t.hero.body}</p>
+    <div class="mt-8 flex flex-col items-center gap-3">
+      <Button href={t.hero.ctaHref}>{t.hero.cta}</Button>
+      <p class="text-sm text-muted">{t.hero.reassurance}</p>
+    </div>
+  </div>
+
+  <div class="relative mt-14 [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]">
+    <div class="ticker-track flex w-max gap-5">
+      {
+        passes.map((hidden) =>
+          t.hero.carousel.map((name) => (
+            <figure class="relative w-56 shrink-0 sm:w-64" aria-hidden={hidden ? 'true' : undefined}>
+              <FramerImage name={name} alt={hidden ? '' : `EatMatrix scan result: ${t.hero.carouselBadge}`} width={256} loading="eager" />
+              <figcaption class="absolute top-3 left-3 rounded-full bg-risk px-3 py-1 text-[11px] font-bold tracking-wide text-white shadow">
+                {t.hero.carouselBadge}
+              </figcaption>
+            </figure>
+          )),
+        )
+      }
+    </div>
+  </div>
+</section>
