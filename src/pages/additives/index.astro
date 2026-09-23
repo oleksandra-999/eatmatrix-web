@@ -55,21 +55,21 @@ const jsonLd = [
       </section>
     ))
   }
-</Page>
 
-<script>
-  // Filter the list as you type; ?q= pre-fills it. Without JS every additive is simply listed.
-  const input = document.getElementById('q') as HTMLInputElement;
-  const rows = Array.from(document.querySelectorAll<HTMLElement>('[data-row]'));
-  const initial = new URLSearchParams(location.search).get('q');
-  if (initial) input.value = initial;
-  const apply = () => {
-    const q = input.value.trim().toLowerCase();
-    for (const row of rows) row.hidden = q.length > 0 && !row.dataset.text!.includes(q);
-    for (const group of document.querySelectorAll<HTMLElement>('[data-group]')) {
-      group.hidden = !Array.from(group.querySelectorAll<HTMLElement>('[data-row]')).some((row) => !row.hidden);
-    }
-  };
-  input.addEventListener('input', apply);
-  apply();
-</script>
+  <script>
+    // Filter the list as you type; ?q= pre-fills it. Without JS every additive is simply listed.
+    const input = document.getElementById('q') as HTMLInputElement;
+    const rows = Array.from(document.querySelectorAll<HTMLElement>('[data-row]'));
+    const initial = new URLSearchParams(location.search).get('q');
+    if (initial) input.value = initial;
+    const apply = () => {
+      const q = input.value.trim().toLowerCase();
+      for (const row of rows) row.hidden = q.length > 0 && !row.dataset.text!.includes(q);
+      for (const group of document.querySelectorAll<HTMLElement>('[data-group]')) {
+        group.hidden = !Array.from(group.querySelectorAll<HTMLElement>('[data-row]')).some((row) => !row.hidden);
+      }
+    };
+    input.addEventListener('input', apply);
+    apply();
+  </script>
+</Page>
