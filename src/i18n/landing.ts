@@ -185,7 +185,7 @@ export type LandingCopy = typeof en;
 /** Replaces every string in `value` with an ltTodo() marker, keeping hrefs and image keys intact. */
 function todoFrom<T>(value: T, key = ''): T {
   if (typeof value === 'string') {
-    const keep = /href|image|carousel/i.test(key) || value === '' || value.startsWith('http') || value.startsWith('#');
+    const keep = /href$|^image$|^carousel$/i.test(key) || value === '' || value.startsWith('http') || value.startsWith('#');
     return (keep ? value : ltTodo(value)) as T;
   }
   if (Array.isArray(value)) return value.map((v) => todoFrom(v, key)) as T;
