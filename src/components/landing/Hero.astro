@@ -22,9 +22,9 @@ const h = t.hero;
     <p class="mt-3 text-[15px] text-muted">{h.reassurance}</p>
   </div>
   <div>
-    {/* Swipeable with CSS scroll snap only; no JavaScript. */}
-    <div class="mt-6 overflow-hidden rounded-[40px] border-[6px] border-pink bg-pink lg:mt-0">
-      <div class="flex snap-x snap-mandatory overflow-x-auto scroll-smooth [scrollbar-width:none]">
+    {/* Swipeable with CSS scroll snap; the script below adds autoplay on top. */}
+    <div class="mt-6 overflow-hidden rounded-[40px] border-[6px] border-pink bg-pink lg:mt-0" data-carousel>
+      <div class="flex snap-x snap-mandatory overflow-x-auto scroll-smooth [scrollbar-width:none]" data-track>
         {
           h.carousel.map((name, i) => (
             <div class="relative w-full shrink-0 snap-center">
@@ -53,3 +53,30 @@ const h = t.hero;
     </div>
   </div>
 </section>
+
+<script>
+  // Autoplay the hero images: next slide every 4 s, looping. Pauses while hovered, touched or focused,
+  // and stays off for people who ask for reduced motion. Without JS it is still a swipeable strip.
+  const INTERVAL = 4000;
+  for (const carousel of document.querySelectorAll<HTMLElement>('[data-carousel]')) {
+    const track = carousel.querySelector<HTMLElement>('[data-track]');
+    if (!track || track.children.length < 2) continue;
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) continue;
+    let paused = false;
+    const pause = () => (paused = true);
+    const resume = () => (paused = false);
+    carousel.addEventListener('pointerenter', pause);
+    carousel.addEventListener('pointerleave', resume);
+    carousel.addEventListener('touchstart', pause, { passive: true });
+    carousel.addEventListener('touchend', () => setTimeout(resume, INTERVAL), { passive: true });
+    carousel.addEventListener('focusin', pause);
+    carousel.addEventListener('focusout', resume);
+    setInterval(() => {
+      if (paused || document.hidden) return;
+      const width = track.clientWidth;
+      const current = Math.round(track.scrollLeft / width);
+      const next = (current + 1) % track.children.length;
+      track.scrollTo({ left: next * width, behavior: 'smooth' });
+    }, INTERVAL);
+  }
+</script>
