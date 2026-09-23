@@ -1,0 +1,64 @@
+---
+/**
+ * Email signup, stored in the EatMatrix Supabase table `email_signups` (same as the live site).
+ * Needs PUBLIC_SIGNUP_URL and PUBLIC_SIGNUP_KEY at build time (the Supabase project URL and its public anon key);
+ * without them the form says "Signup is not configured yet." instead of sending anything.
+ */
+interface Props {
+  title: string;
+  body: string;
+  button: string;
+  /** Which list the address joins, e.g. "updates" or "additive-watch". */
+  hook: string;
+  /** Extra context stored with the signup, e.g. the additive code. */
+  context?: string;
+}
+const { title, body, button, hook, context = '' } = Astro.props;
+const url = import.meta.env.PUBLIC_SIGNUP_URL ?? '';
+const key = import.meta.env.PUBLIC_SIGNUP_KEY ?? '';
+---
+
+<section class="my-10 rounded-2xl border border-ink/10 bg-white p-6">
+  <h3 class="font-display text-lg font-bold">{title}</h3>
+  <p class="mt-1 text-sm text-muted">{body}</p>
+  <form class="mt-4 flex flex-col gap-2 sm:flex-row" data-signup data-hook={hook} data-context={context} data-url={url} data-key={key}>
+    <input
+      type="email"
+      name="email"
+      required
+      placeholder="you@example.com"
+      autocomplete="email"
+      aria-label="Email address"
+      class="flex-1 rounded-full border border-ink/20 px-4 py-2 text-sm focus:ring-2 focus:ring-brand focus:outline-none"
+    />
+    <button type="submit" class="rounded-full bg-ink px-5 py-2 text-sm font-semibold text-white hover:bg-ink/85">{button}</button>
+  </form>
+  <p class="mt-2 text-xs text-muted" data-status aria-live="polite"></p>
+</section>
+
+<script>
+  for (const form of document.querySelectorAll<HTMLFormElement>('form[data-signup]')) {
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const status = form.parentElement!.querySelector<HTMLElement>('[data-status]')!;
+      const email = (form.elements.namedItem('email') as HTMLInputElement).value.trim();
+      const { hook, context, url, key } = form.dataset;
+      if (!key) {
+        status.textContent = 'Signup is not configured yet.';
+        return;
+      }
+      status.textContent = 'Saving…';
+      try {
+        const res = await fetch(`${url}/rest/v1/email_signups`, {
+          method: 'POST',
+          headers: { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+          body: JSON.stringify({ email, hook, context, page_path: location.pathname, locale: document.documentElement.lang }),
+        });
+        status.textContent = res.ok ? 'Done — you’re on the list.' : 'Something went wrong. Please try again.';
+        if (res.ok) form.reset();
+      } catch {
+        status.textContent = 'Network error. Please try again.';
+      }
+    });
+  }
+</script>

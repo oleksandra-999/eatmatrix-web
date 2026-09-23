@@ -1,8 +1,7 @@
 ---
-import Base from '../../layouts/Base.astro';
+import Page from '../../layouts/Page.astro';
 import { landing } from '../../i18n/landing';
 import { LT_TODO_PREFIX, type Lang } from '../../i18n';
-import Nav from './Nav.astro';
 import Hero from './Hero.astro';
 import WhySkincareFails from './WhySkincareFails.astro';
 import Proof from './Proof.astro';
@@ -11,21 +10,26 @@ import Ingredients from './Ingredients.astro';
 import Testimonials from './Testimonials.astro';
 import HowItWorks from './HowItWorks.astro';
 import Pricing from './Pricing.astro';
+import ResearchDesk from './ResearchDesk.astro';
 import Faq from './Faq.astro';
-import Footer from './Footer.astro';
-import Sprite from '../ui/Sprite.astro';
+import Icon from '../ui/Icon.astro';
+import Rich from '../ui/Rich.astro';
+import Cta from '../ui/Cta.astro';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 const t = landing[lang];
 // Keep untranslated pages out of search results until a human translation lands.
 const untranslated = JSON.stringify(t).includes(LT_TODO_PREFIX);
+const faqLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: t.faq.items.map((i) => ({ '@type': 'Question', name: i.q, acceptedAnswer: { '@type': 'Answer', text: i.a } })),
+};
 ---
 
-<Base title={t.meta.title} description={t.meta.description} lang={lang} noindex={untranslated}>
-  <Sprite />
-  <Nav t={t} lang={lang} />
-  <main class="mx-auto w-full max-w-[430px] flex-1 px-4 lg:max-w-6xl lg:px-8">
+<Page title={t.meta.title} description={t.meta.description} lang={lang} noindex={untranslated} translated ctaHref="#pricing" jsonLd={[faqLd]}>
+  <div class="mx-auto max-w-[430px] px-4 lg:max-w-6xl lg:px-8">
     <Hero t={t} />
     <WhySkincareFails t={t} />
     <Proof t={t} />
@@ -34,7 +38,13 @@ const untranslated = JSON.stringify(t).includes(LT_TODO_PREFIX);
     <Testimonials t={t} />
     <HowItWorks t={t} />
     <Pricing t={t} />
+    {lang === 'en' && <ResearchDesk t={t} />}
     <Faq t={t} />
-  </main>
-  <Footer t={t} lang={lang} />
-</Base>
+  </div>
+  <Fragment slot="footer-cta">
+    <Icon name="logo-mark" viewBox="0 0 130 86" class="mx-auto h-[86px] w-[130px]" />
+    <h2 class="mt-6 text-[38px] leading-[1.1] font-semibold lg:text-[56px]"><Rich text={t.finalCta.title} /></h2>
+    <p class="mx-auto mt-4 text-[18px] leading-snug text-white/90 lg:max-w-2xl lg:text-[20px]">{t.finalCta.body}</p>
+    <Cta href={t.finalCta.ctaHref} variant="yellow" class="mt-7 py-5! lg:mx-auto lg:max-w-md">{t.finalCta.cta}</Cta>
+  </Fragment>
+</Page>

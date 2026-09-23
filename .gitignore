@@ -11,6 +11,7 @@ npm-debug.log*
 # environment variables and secrets (never commit)
 .env
 .env.*
+!.env.example
 *.pem
 id_*
 

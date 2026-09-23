@@ -1,0 +1,25 @@
+---
+import Base from './Base.astro';
+import Sprite from '../components/ui/Sprite.astro';
+import Header from '../components/site/Header.astro';
+import Footer from '../components/site/Footer.astro';
+import type { Lang } from '../i18n';
+
+type BaseProps = Parameters<typeof Base>[0];
+interface Props extends Omit<BaseProps, 'lang'> {
+  lang?: Lang;
+  ctaHref?: string;
+}
+const { lang = 'en', ctaHref, ...rest } = Astro.props;
+---
+
+<Base lang={lang} {...rest}>
+  <Sprite />
+  <Header lang={lang} ctaHref={ctaHref} />
+  <main class="flex-1">
+    <slot />
+  </main>
+  <Footer lang={lang}>
+    <slot name="footer-cta" />
+  </Footer>
+</Base>

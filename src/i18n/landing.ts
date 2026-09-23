@@ -11,7 +11,6 @@ const en = {
     title: 'EatMatrix',
     description: "Scan Food Labels Instantly and Know What's Safe to Eat.",
   },
-  nav: { cta: 'Get started', ctaHref: '#pricing', homeLabel: 'EatMatrix home' },
   hero: {
     badge: 'Warning: hidden inflammation detected',
     // Words wrapped in *asterisks* render in the italic serif accent (see <Rich>).
@@ -172,6 +171,11 @@ const en = {
     guaranteeTitle: '100% RISK-FREE GUARANTEE',
     guaranteeBody: "If you don't see clearer skin and less bloating in your first 14 days, simply cancel in the app settings. You won't be charged a penny.",
   },
+  researchDesk: {
+    title: 'From the *Research Desk*',
+    subtitle: 'Guides on additives, label reading and food scanner apps. Every claim cited.',
+    all: 'All articles',
+  },
   faq: {
     title: 'Frequently Asked Questions',
     // Answers as shown on eatmatrix.com on 2026-09-23 (they replaced the earlier Lorem Ipsum placeholders).
@@ -204,14 +208,6 @@ const en = {
     body: 'You spend $200 on serums, but you might be eating inflammatory triggers for breakfast.',
     cta: 'Start 14-day free trial',
     ctaHref: '#pricing',
-  },
-  footer: {
-    privacy: 'Privacy Policy',
-    terms: 'Terms of Service',
-    appStore: 'Download on the App Store',
-    instagram: 'Instagram',
-    facebook: 'Facebook',
-    wordmarkAlt: 'EatMatrix',
   },
 };
 

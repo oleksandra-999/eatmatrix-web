@@ -1,25 +1,29 @@
 ---
 import '../styles/global.css';
+import { getImage } from 'astro:assets';
 import { locales, localizePath, unlocalizePath, ogLocale, type Lang } from '../i18n';
-import { FRAMER_CDN, framerImages } from '../assets/framer/manifest';
+import ogDefault from '../assets/framer/d1H6bGGts5KM8IDKoEuOUY7Fmk.png';
 
 interface Props {
   title: string;
   description: string;
   lang: Lang;
-  /** Absolute or root-relative OG image. Defaults to the live site's share image. */
+  /** Absolute or root-relative OG image. Defaults to the site's share image. */
   ogImage?: string;
   ogType?: 'website' | 'article';
   noindex?: boolean;
+  /** Link the EN/LT versions with hreflang. Only for pages that exist in every locale. */
+  translated?: boolean;
+  /** schema.org objects, each emitted as its own JSON-LD script. */
+  jsonLd?: object[];
 }
 
-const { title, description, lang, ogType = 'website', noindex = false } = Astro.props;
-// TODO: serve the OG image from this site once Framer assets are downloaded.
-const ogImage = Astro.props.ogImage ?? `${FRAMER_CDN}${framerImages.ogImage.file}`;
+const { title, description, lang, ogType = 'website', noindex = false, translated = false, jsonLd = [] } = Astro.props;
 const site = Astro.site!;
 const basePath = unlocalizePath(Astro.url.pathname);
 const canonical = new URL(localizePath(basePath, lang), site).href;
-const alternates = locales.map((l) => ({ lang: l, href: new URL(localizePath(basePath, l), site).href }));
+const alternates = translated ? locales.map((l) => ({ lang: l, href: new URL(localizePath(basePath, l), site).href })) : [];
+const ogImage = Astro.props.ogImage ?? (await getImage({ src: ogDefault, format: 'png' })).src;
 const ogImageUrl = new URL(ogImage, site).href;
 ---
 
@@ -33,7 +37,7 @@ const ogImageUrl = new URL(ogImage, site).href;
     {noindex && <meta name="robots" content="noindex" />}
     <link rel="canonical" href={canonical} />
     {alternates.map((a) => <link rel="alternate" hreflang={a.lang} href={a.href} />)}
-    <link rel="alternate" hreflang="x-default" href={alternates[0].href} />
+    {alternates.length > 0 && <link rel="alternate" hreflang="x-default" href={alternates[0].href} />}
     <link rel="sitemap" href="/sitemap-index.xml" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="preload" href="/fonts/manrope-600-normal.woff2" as="font" type="font/woff2" crossorigin />
@@ -46,12 +50,13 @@ const ogImageUrl = new URL(ogImage, site).href;
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImageUrl} />
     <meta property="og:locale" content={ogLocale[lang]} />
-    {locales.filter((l) => l !== lang).map((l) => <meta property="og:locale:alternate" content={ogLocale[l]} />)}
+    {translated && locales.filter((l) => l !== lang).map((l) => <meta property="og:locale:alternate" content={ogLocale[l]} />)}
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImageUrl} />
     <meta name="apple-itunes-app" content="app-id=6751504815" />
+    {jsonLd.map((data) => <script type="application/ld+json" set:html={JSON.stringify(data).replace(/</g, "\\u003c")} />)}
   </head>
   <body class="flex min-h-screen flex-col">
     <slot />

@@ -1,0 +1,16 @@
+---
+import { links } from '../../i18n/links';
+interface Props {
+  /** The document's name as it appears in the notice, e.g. "Privacy Policy". */
+  name: string;
+}
+const { name } = Astro.props;
+---
+
+<!-- TODO(adomas): replace this notice with the authoritative text. The live site shows the same placeholder. -->
+<p class="rounded-2xl border border-caution/30 bg-caution/5 p-4 text-sm">
+  <strong>This page is being updated.</strong> The full {name} text is being migrated to this site. Until then, please email <a
+    href={`mailto:${links.supportEmail}`}>{links.supportEmail}</a
+  > with any questions about your data or the terms of use — we answer every message.
+</p>
+<p>Operator: MAXHUMAN, MB. App: EatMatrix (iOS), available on the <a href={links.appStore}>App Store</a>.</p>

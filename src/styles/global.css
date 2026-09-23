@@ -76,6 +76,14 @@
   --color-lavender-line: #d0bdd6;
   --color-trigger: #fcedb9;
   --color-trigger-dot: #e8b86d;
+  --color-white: #fff;
+  --color-black: #000;
+  --color-brand: #f2da41;
+  /* Verdict colors for the additive encyclopedia. */
+  --color-safe: #1f9d55;
+  --color-moderation: #b8860b;
+  --color-caution: #d9822b;
+  --color-avoid: #c14545;
   --color-todo: #b45309;
   --color-todo-soft: #fff7e6;
 }
@@ -85,15 +93,17 @@
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
   }
-  body {
-    @apply bg-paper font-sans text-ink;
-  }
-  h1,
-  h2,
-  h3,
-  h4 {
-    @apply font-display tracking-tight;
-  }
+}
+
+/* Unlayered, like the live stylesheet: headings stay tracking-tight even when a utility sets letter-spacing. */
+body {
+  @apply bg-paper font-sans text-ink;
+}
+h1,
+h2,
+h3,
+h4 {
+  @apply font-display tracking-tight;
 }
 
 /* Italic serif accent used inside headings ("Scan Your *Food*."). */
@@ -102,4 +112,136 @@
   font-style: italic;
   font-weight: 400;
   letter-spacing: 0;
+}
+
+/* Long-form text: articles, additive pages, legal pages. Values match the live eatmatrix.com stylesheet. */
+/* Unlayered on purpose, like the live stylesheet: these beat utility classes on the same element. */
+.prose-em {
+  font-size: 17px;
+  line-height: 1.7;
+  color: var(--color-ink);
+}
+.prose-em :where(h2) {
+  @apply mt-12 mb-4 scroll-mt-28 text-[26px] leading-tight font-semibold lg:text-[30px];
+}
+.prose-em :where(h3) {
+  @apply mt-8 mb-3 text-[20px] leading-snug font-semibold;
+}
+.prose-em :where(p) {
+  @apply my-4;
+}
+.prose-em :where(strong) {
+  @apply font-semibold;
+}
+.prose-em :where(img) {
+  @apply my-8 w-full rounded-[24px];
+}
+.prose-em :where(figure) {
+  @apply my-8;
+}
+.prose-em :where(table) {
+  @apply my-6 w-full border-collapse text-[15px];
+}
+.prose-em :where(th) {
+  @apply border-b border-ink/15 py-2 pr-4 text-left text-[12px] font-bold tracking-[0.08em] text-muted uppercase;
+}
+.prose-em :where(td) {
+  @apply border-b border-ink/10 py-3 pr-4 align-top;
+}
+.prose-em :where(table + p em) {
+  @apply text-[14px] text-muted;
+}
+.prose-em :where(hr) {
+  @apply my-10 border-ink/10;
+}
+.prose-em :where(figure.illustration img) {
+  @apply my-0 w-full rounded-[28px];
+}
+.prose-em :where(figure.illustration figcaption) {
+  @apply mt-3 text-center text-[14px] text-muted;
+}
+.prose-em :where(figure.chart) {
+  @apply my-8 rounded-[24px] bg-white p-6 shadow-[0_2px_16px_rgba(0,0,0,0.05)];
+}
+.prose-em :where(.chart-title) {
+  @apply my-0 mb-4 text-[16px] font-semibold;
+}
+.prose-em :where(.chart-rows) {
+  @apply space-y-3;
+}
+.prose-em :where(.chart-row) {
+  @apply grid grid-cols-[minmax(0,9rem)_1fr_auto] items-center gap-3 text-[14px] sm:grid-cols-[minmax(0,12rem)_1fr_auto];
+}
+.prose-em :where(.chart-label) {
+  @apply leading-snug text-ink/80;
+}
+.prose-em :where(.chart-track) {
+  @apply h-3 overflow-hidden rounded-full bg-lavender-soft;
+}
+.prose-em :where(.chart-bar) {
+  @apply h-full rounded-full bg-purple;
+}
+.prose-em :where(.chart-value) {
+  @apply font-semibold whitespace-nowrap text-plum;
+}
+.prose-em :where(.chart-note) {
+  @apply ml-1 font-normal text-muted;
+}
+.prose-em :where(.chart-cite) {
+  @apply ml-2 text-[11px] font-semibold text-muted no-underline;
+}
+.prose-em :where(.chart-caption) {
+  @apply my-0 mt-4 text-[13px] text-muted;
+}
+.prose-em :where(ul) {
+  @apply my-4 list-disc space-y-1 pl-6;
+}
+.prose-em :where(ol) {
+  @apply my-4 list-decimal space-y-1 pl-6;
+}
+.prose-em :where(a) {
+  @apply underline decoration-purple underline-offset-2;
+}
+.prose-em :where(sup a) {
+  @apply text-xs no-underline;
+}
+.prose-em :where(blockquote) {
+  @apply my-6 rounded-[20px] border border-lavender-line/60 bg-lavender-soft px-6 py-4 text-[18px] leading-snug text-plum;
+}
+.prose-em :where(blockquote p) {
+  @apply my-0;
+}
+.prose-em :where(blockquote strong) {
+  @apply text-[22px] font-bold text-purple;
+}
+.prose-em :where(blockquote a) {
+  @apply ml-1 text-[13px] font-semibold decoration-purple/50;
+}
+.prose-em :where(section.references) {
+  @apply mt-14 border-t border-ink/10 pt-6 text-[14px] leading-relaxed text-muted;
+}
+.prose-em :where(section.references h2) {
+  @apply mt-0 mb-3 text-[18px] font-semibold text-ink;
+}
+.prose-em :where(section.references ol) {
+  @apply my-0 space-y-2;
+}
+.prose-em :where(section.references li) {
+  @apply scroll-mt-28;
+}
+
+.verdict-safe {
+  @apply border-safe/30 bg-safe/10 text-safe;
+}
+.verdict-moderation {
+  @apply border-moderation/30 bg-moderation/10 text-moderation;
+}
+.verdict-caution {
+  @apply border-caution/30 bg-caution/10 text-caution;
+}
+.verdict-avoid {
+  @apply border-avoid/30 bg-avoid/10 text-avoid;
+}
+.verdict-unknown {
+  @apply border-ink/10 bg-ink/5 text-muted;
 }

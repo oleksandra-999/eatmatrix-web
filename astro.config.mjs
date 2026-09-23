@@ -14,6 +14,8 @@ export default defineConfig({
     locales: ['en', 'lt'],
     routing: { prefixDefaultLocale: false },
   },
+  // Article text is ported verbatim; don't let Markdown rewrite straight quotes into curly ones.
+  markdown: { smartypants: false },
   integrations: [
     sitemap({
       i18n: { defaultLocale: 'en', locales: { en: 'en', lt: 'lt' } },
