@@ -1,0 +1,27 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+interface Props {
+  article: CollectionEntry<'articles'>;
+  /** Heading level: h2 on the articles index, h3 inside other sections. */
+  as?: 'h2' | 'h3';
+  showReadingTime?: boolean;
+  showReadMore?: boolean;
+  showDate?: boolean;
+  titleSize?: string;
+}
+const { article, as: Heading = 'h3', showReadingTime = false, showReadMore = true, showDate = true, titleSize = 'text-[18px]' } = Astro.props;
+const { title, description, excerpt, cover, date, readingTime } = article.data;
+const dateLabel = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+---
+
+<a
+  href={`/articles/${article.id}`}
+  class="flex h-full flex-col rounded-[32px] bg-white p-5 shadow-[0_2px_16px_rgba(0,0,0,0.05)] transition hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)]"
+>
+  {cover && <Image src={cover} alt="" width={800} height={450} fit="cover" class="mb-4 aspect-[16/9] w-full rounded-[20px] object-cover" />}
+  {showDate && <p class="text-[12px] text-muted">{dateLabel}{showReadingTime && ` · ${readingTime} min read`}</p>}
+  <Heading class:list={[titleSize, 'leading-snug font-semibold', showDate && 'mt-1']}>{title}</Heading>
+  <p class="mt-2 line-clamp-3 text-[14px] leading-relaxed text-muted">{excerpt ?? description}</p>
+  {showReadMore && <p class="mt-auto pt-4 text-[13px] font-semibold text-purple">Read article →</p>}
+</a>

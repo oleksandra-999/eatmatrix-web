@@ -1,0 +1,224 @@
+---
+import { Image, getImage } from 'astro:assets';
+import { render, type CollectionEntry } from 'astro:content';
+import Page from '../../layouts/Page.astro';
+import ArticleCard from '../../components/articles/ArticleCard.astro';
+import Icon from '../../components/ui/Icon.astro';
+import SignupForm from '../../components/site/SignupForm.astro';
+import { getArticles } from '../../lib/articles';
+import { links } from '../../i18n/links';
+
+export async function getStaticPaths() {
+  const articles = await getArticles();
+  return articles.map((article, i) => ({
+    params: { slug: article.id },
+    // Newest first, so "previous" is the older neighbour and "next" the newer one.
+    props: { article, older: articles[i + 1], newer: articles[i - 1], others: articles.filter((a) => a.id !== article.id) },
+  }));
+}
+
+interface Props {
+  article: CollectionEntry<'articles'>;
+  older?: CollectionEntry<'articles'>;
+  newer?: CollectionEntry<'articles'>;
+  others: CollectionEntry<'articles'>[];
+}
+const { article, older, newer, others } = Astro.props;
+const { title, seoTitle, description, date, cover, readingTime, tldr, takeaways, faq } = article.data;
+const { Content, headings } = await render(article);
+const hasReferences = article.body?.includes('class="references"') ?? false;
+const toc = [
+  ...headings.filter((h) => h.depth === 2).map((h) => ({ slug: h.slug, text: h.text })),
+  ...(hasReferences ? [{ slug: 'references', text: 'References' }] : []),
+];
+const dateLabel = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+const url = new URL(`/articles/${article.id}`, Astro.site).href;
+const coverImage = cover ? await getImage({ src: cover, width: 1200, format: 'jpg' }) : undefined;
+const citations = [...(article.body ?? '').matchAll(/<li id="cite-\d+">\s*<a href="([^"]+)"/g)].map((m) => m[1]);
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: title,
+    description,
+    url,
+    datePublished: date.toISOString(),
+    dateModified: date.toISOString(),
+    ...(coverImage && { image: new URL(coverImage.src, Astro.site).href }),
+    author: { '@type': 'Organization', name: 'EatMatrix Research Team' },
+    publisher: { '@type': 'Organization', name: 'MAXHUMAN, MB' },
+    ...(citations.length && { citation: citations }),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: new URL('/', Astro.site).href },
+      { '@type': 'ListItem', position: 2, name: 'Articles', item: new URL('/articles', Astro.site).href },
+      { '@type': 'ListItem', position: 3, name: title, item: url },
+    ],
+  },
+  ...(faq.length
+    ? [
+        {
+          '@context': 'https://schema.org',
+          '@type': 'FAQPage',
+          mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+        },
+      ]
+    : []),
+];
+---
+
+<Page title={seoTitle ?? title} {description} ogImage={coverImage?.src} jsonLd={jsonLd}>
+  <div class="mx-auto max-w-6xl px-4 pt-8 lg:px-8 lg:pt-12">
+    <nav class="text-[13px] text-muted" aria-label="Breadcrumb">
+      <a href="/" class="hover:text-ink">Home</a><span class="mx-2">/</span><a href="/articles" class="hover:text-ink">Articles</a><span
+        class="mx-2">/</span
+      ><span class="text-ink/70">{title}</span>
+    </nav>
+    <div class="mt-6 lg:grid lg:grid-cols-[minmax(0,1fr)_260px] lg:gap-16">
+      <article class="max-w-3xl min-w-0">
+        <h1 class="text-[32px] leading-[1.15] font-semibold lg:text-[44px]">{title}</h1>
+        <p class="mt-4 text-[14px] text-muted"><time datetime={date.toISOString()}>{dateLabel}</time> · {readingTime} min read</p>
+        <div class="mt-6 flex items-start gap-4 rounded-[24px] bg-white p-5 shadow-[0_2px_16px_rgba(0,0,0,0.05)]">
+          <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-plum text-[14px] font-bold text-white" aria-hidden="true">ER</div>
+          <div class="min-w-0 text-[14px] leading-snug">
+            <p><span class="text-muted">Written and fact checked by</span> <strong class="font-semibold">EatMatrix Research Team</strong></p>
+            <p class="mt-1 text-muted">Food-additive research team at MAXHUMAN, MB, makers of the EatMatrix scanner</p>
+            <p class="mt-2 text-[13px] text-muted">
+              Every claim links to a primary source. Regulatory positions cite EFSA, FDA and WHO/JECFA opinions current at publication.
+            </p>
+          </div>
+        </div>
+        {cover && <Image src={cover} alt="" width={1200} height={675} fit="cover" loading="eager" class="mt-8 aspect-[16/9] w-full rounded-[32px] object-cover" />}
+        <section class="mt-8 rounded-[24px] border border-lavender-line/60 bg-lavender-soft p-6">
+          <h2 class="text-[12px] font-bold tracking-[0.12em] text-purple uppercase">TL;DR</h2>
+          <p class="mt-2 text-[16px] leading-relaxed text-ink">{tldr}</p>
+        </section>
+        {
+          takeaways.length > 0 && (
+            <section class="mt-4 rounded-[24px] bg-white p-6 shadow-[0_2px_16px_rgba(0,0,0,0.05)]">
+              <h2 class="text-[12px] font-bold tracking-[0.12em] text-muted uppercase">Key takeaways</h2>
+              <ul class="mt-3 space-y-2 text-[15px] leading-snug">
+                {takeaways.map((item) => (
+                  <li class="flex gap-3">
+                    <Icon name="check" viewBox="0 0 20 20" class="mt-0.5 h-4 w-4 shrink-0 text-purple" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )
+        }
+        {
+          toc.length > 0 && (
+            <details class="mt-6 rounded-[20px] border border-line/60 bg-white px-5 py-3 lg:hidden">
+              <summary class="cursor-pointer list-none text-[14px] font-semibold">On this page</summary>
+              <ol class="mt-3 space-y-2 text-[14px] text-muted">
+                {toc.map((h) => (
+                  <li>
+                    <a href={`#${h.slug}`} class="hover:text-ink">
+                      {h.text}
+                    </a>
+                  </li>
+                ))}
+              </ol>
+            </details>
+          )
+        }
+        <div class="prose-em mt-6">
+          <Content />
+        </div>
+        {
+          faq.length > 0 && (
+            <section class="mt-14">
+              <h2 class="text-[26px] leading-tight font-semibold lg:text-[30px]">Frequently asked questions</h2>
+              <div class="mt-6 space-y-3">
+                {faq.map((f) => (
+                  <details class="group rounded-[24px] border border-line/60 bg-white px-5 py-4">
+                    <summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-[16px] font-semibold">
+                      {f.q}
+                      <span class="text-muted transition group-open:rotate-180" aria-hidden="true">⌄</span>
+                    </summary>
+                    <p class="mt-3 text-[15px] leading-relaxed text-ink/80">{f.a}</p>
+                  </details>
+                ))}
+              </div>
+            </section>
+          )
+        }
+        <nav class="mt-12 flex flex-col gap-3 border-t border-ink/10 pt-6 text-[14px] sm:flex-row sm:justify-between" aria-label="Adjacent articles">
+          {older ? <a href={`/articles/${older.id}`} class="text-muted hover:text-ink">‹ {older.data.title}</a> : <span />}
+          {newer && <a href={`/articles/${newer.id}`} class="text-muted hover:text-ink sm:text-right">{newer.data.title} ›</a>}
+        </nav>
+        <SignupForm
+          title="More like this, by email"
+          body="New research-backed guides and additive verdict changes. No spam."
+          button="Keep me posted"
+          hook="updates"
+        />
+      </article>
+      <aside class="hidden lg:block">
+        <div class="sticky top-28">
+          {
+            toc.length > 0 && (
+              <nav aria-label="On this page">
+                <p class="text-[12px] font-bold tracking-[0.12em] text-muted uppercase">On this page</p>
+                <ol class="mt-3 space-y-2 border-l border-ink/10 text-[13px] leading-snug text-muted">
+                  {toc.map((h) => (
+                    <li>
+                      <a href={`#${h.slug}`} class="-ml-px block border-l border-transparent pl-4 hover:border-purple hover:text-ink" data-toc={h.slug}>
+                        {h.text}
+                      </a>
+                    </li>
+                  ))}
+                </ol>
+              </nav>
+            )
+          }
+          <a href={links.appStore} class="mt-10 block rounded-[24px] bg-plum p-5 text-white">
+            <p class="text-[12px] font-bold tracking-[0.12em] text-white/70 uppercase">EatMatrix app</p>
+            <p class="mt-2 text-[17px] leading-snug font-semibold">Scan any label. See the regulator’s verdict on every additive.</p>
+            <p class="mt-3 inline-block rounded-full bg-yellow px-4 py-2 text-[13px] font-bold text-plum">Get the app</p>
+          </a>
+        </div>
+      </aside>
+    </div>
+    {
+      others.length > 0 && (
+        <section class="mt-20 border-t border-ink/10 pt-12">
+          <h2 class="text-[26px] leading-tight font-semibold lg:text-[30px]">Related articles</h2>
+          <div class="mt-6 grid gap-4 lg:grid-cols-3 lg:gap-8">
+            {others.slice(0, 3).map((a) => (
+              <ArticleCard article={a} showReadMore={false} titleSize="text-[17px]" />
+            ))}
+          </div>
+        </section>
+      )
+    }
+  </div>
+</Page>
+
+<script>
+  // Highlights the section being read in the desktop table of contents.
+  const tocLinks = Array.from(document.querySelectorAll<HTMLAnchorElement>('a[data-toc]'));
+  if (tocLinks.length && 'IntersectionObserver' in window) {
+    const bySlug = new Map(tocLinks.map((a) => [a.dataset.toc!, a]));
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          for (const a of tocLinks) a.classList.remove('border-purple', 'text-ink', 'font-semibold');
+          bySlug.get(entry.target.id)?.classList.add('border-purple', 'text-ink', 'font-semibold');
+        }
+      },
+      { rootMargin: '-20% 0px -70% 0px' },
+    );
+    for (const slug of bySlug.keys()) {
+      const target = document.getElementById(slug);
+      if (target) observer.observe(target);
+    }
+  }
+</script>

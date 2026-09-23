@@ -1,0 +1,27 @@
+---
+import Page from '../../layouts/Page.astro';
+import ArticleCard from '../../components/articles/ArticleCard.astro';
+import { getArticles } from '../../lib/articles';
+const articles = await getArticles();
+---
+
+<Page
+  title="Articles — food scanners, additives and what the research says | EatMatrix"
+  description="Research-backed guides on food additives, label reading and food scanner apps. Every claim cited."
+>
+  <section class="mx-auto max-w-6xl px-4 pt-12 lg:px-8 lg:pt-20">
+    <h1 class="text-[36px] leading-tight font-semibold lg:text-[52px]">From the <span class="serif">Research Desk</span></h1>
+    <p class="mt-4 max-w-2xl text-[18px] leading-snug text-muted lg:text-[20px]">
+      Guides and comparisons written to the same standard as our verdicts: primary sources cited, positions taken, nothing dressed up to scare you.
+    </p>
+    <ul class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
+      {
+        articles.map((article) => (
+          <li>
+            <ArticleCard article={article} as="h2" showReadingTime />
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</Page>
