@@ -1,0 +1,75 @@
+---
+import Page from '../../layouts/Page.astro';
+import VerdictBadge from '../../components/additives/VerdictBadge.astro';
+import { additives, additiveGroups, additiveIntro } from '../../lib/additives';
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'Food additives encyclopedia (E-numbers)',
+    url: new URL('/additives', Astro.site).href,
+    numberOfItems: additives.length,
+  },
+];
+---
+
+<Page
+  title={`Food additives explained: ${additives.length} E-numbers with verdicts | EatMatrix`}
+  description="Every E-number with a plain-language verdict, EFSA / FDA / WHO positions, vegan · halal · gluten-free flags, and the research behind it."
+  lang="en"
+  jsonLd={jsonLd}
+>
+  <section class="mx-auto max-w-6xl px-4 pt-12">
+    <h1 class="text-3xl font-extrabold sm:text-4xl">Food additives, explained</h1>
+    <p class="mt-3 max-w-3xl text-lg text-ink/80">{additiveIntro}</p>
+    <input
+      id="q"
+      type="search"
+      placeholder="Filter by code or name…"
+      aria-label="Filter additives by code or name"
+      class="mt-6 w-full max-w-lg rounded-full border border-ink/20 bg-white px-5 py-3 focus:ring-2 focus:ring-brand focus:outline-none"
+    />
+  </section>
+  {
+    additiveGroups.map((g) => (
+      <section class="mx-auto max-w-6xl px-4 py-8" data-group>
+        <h2 class="text-xl font-bold">
+          {g.range} <span class="font-normal text-muted">· {g.category}</span>
+        </h2>
+        <ul class="mt-4 grid min-w-0 grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+          {g.items.map((a) => (
+            <li data-row data-text={`${a.code} ${a.name}`.toLowerCase()}>
+              <a
+                href={`/additives/${a.slug}`}
+                class="flex min-w-0 items-center justify-between gap-3 rounded-xl border border-ink/10 bg-white px-4 py-2.5 hover:bg-paper"
+              >
+                <span class="min-w-0 truncate">
+                  <span class="font-semibold">{a.code}</span> <span class="text-muted">· {a.name}</span>
+                </span>
+                <VerdictBadge verdict={a.verdict} />
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))
+  }
+</Page>
+
+<script>
+  // Filter the list as you type; ?q= pre-fills it. Without JS every additive is simply listed.
+  const input = document.getElementById('q') as HTMLInputElement;
+  const rows = Array.from(document.querySelectorAll<HTMLElement>('[data-row]'));
+  const initial = new URLSearchParams(location.search).get('q');
+  if (initial) input.value = initial;
+  const apply = () => {
+    const q = input.value.trim().toLowerCase();
+    for (const row of rows) row.hidden = q.length > 0 && !row.dataset.text!.includes(q);
+    for (const group of document.querySelectorAll<HTMLElement>('[data-group]')) {
+      group.hidden = !Array.from(group.querySelectorAll<HTMLElement>('[data-row]')).some((row) => !row.hidden);
+    }
+  };
+  input.addEventListener('input', apply);
+  apply();
+</script>

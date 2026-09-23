@@ -1,0 +1,156 @@
+---
+import Page from '../../layouts/Page.astro';
+import VerdictBadge from '../../components/additives/VerdictBadge.astro';
+import SignupForm from '../../components/site/SignupForm.astro';
+import { additives, type Additive } from '../../lib/additives';
+import { links } from '../../i18n/links';
+
+export function getStaticPaths() {
+  return additives.map((additive) => ({ params: { slug: additive.slug }, props: { additive } }));
+}
+
+const { additive: a } = Astro.props as { additive: Additive };
+const url = new URL(`/additives/${a.slug}`, Astro.site).href;
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: `${a.code} — ${a.name}`,
+    description: a.description,
+    url,
+    dateModified: a.reviewed,
+    author: { '@type': 'Organization', name: a.reviewer, url: new URL('/', Astro.site).href },
+    publisher: { '@type': 'Organization', name: 'MAXHUMAN, MB' },
+    about: { '@type': 'ChemicalSubstance', name: a.name, alternateName: a.code },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: a.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Additives', item: new URL('/additives', Astro.site).href },
+      { '@type': 'ListItem', position: 2, name: a.code, item: url },
+    ],
+  },
+];
+---
+
+<Page title={a.title} description={a.description} lang="en" ogType="article" jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 pt-10">
+    <nav class="text-sm text-muted" aria-label="Breadcrumb">
+      <a href="/additives" class="hover:text-ink">Additives</a> / {a.code}
+    </nav>
+    <h1 class="mt-3 text-3xl font-extrabold sm:text-4xl">
+      {a.code} <span class="font-bold text-ink/70">· {a.name}</span>
+    </h1>
+
+    <div class="mt-6 grid gap-5 rounded-3xl border border-ink/10 bg-white p-6">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <div class="text-xs font-semibold tracking-wide text-muted uppercase">EatMatrix verdict</div>
+          <div class="mt-2"><VerdictBadge verdict={a.verdict} size="lg" /></div>
+        </div>
+        <div class="text-right text-xs text-muted">
+          <div>Last reviewed: <time datetime={a.reviewed}>{a.reviewed}</time></div>
+          <div>{a.reviewer}</div>
+        </div>
+      </div>
+      {a.unratedNote && <p class="text-sm text-muted">{a.unratedNote}</p>}
+      <dl class="grid gap-3 sm:grid-cols-2" hidden={a.regulators.length === 0}>
+        {
+          a.regulators.map((r) => (
+            <div class="flex items-center justify-between rounded-xl bg-paper px-3 py-2">
+              <dt class="text-sm font-medium">{r.name}</dt>
+              <dd>
+                <VerdictBadge verdict={r.verdict} />
+              </dd>
+            </div>
+          ))
+        }
+      </dl>
+      <div class="flex flex-wrap gap-2 text-xs">
+        {
+          a.flags.map((f) => (
+            <span
+              class:list={[
+                'rounded-full border px-2.5 py-1',
+                f.ok ? 'border-safe/30 bg-safe/5 text-safe' : 'border-ink/10 text-muted line-through',
+              ]}
+            >
+              {f.label}
+            </span>
+          ))
+        }
+      </div>
+    </div>
+
+    <div class="prose-em mt-8">
+      <h2>What is {a.code}?</h2>
+      {a.whatIs.map((p) => <p>{p}</p>)}
+      {a.aliases && <p class="text-sm text-muted">{a.aliases}</p>}
+      {
+        a.evidence.length > 0 && (
+          <>
+            <h2>What the evidence says</h2>
+            <ul>
+              {a.evidence.map((e) => (
+                <li>{e}</li>
+              ))}
+            </ul>
+          </>
+        )
+      }
+      {
+        a.research.length > 0 && (
+          <>
+            <h2>Research behind the verdict</h2>
+            <ol>
+              {a.research.map((r) => (
+                <li set:html={r} />
+              ))}
+            </ol>
+          </>
+        )
+      }
+      {
+        a.faq.length > 0 && (
+          <>
+            <h2>Frequently asked questions</h2>
+            {a.faq.map((f) => (
+              <details class="group border-b border-ink/10 py-3">
+                <summary class="cursor-pointer font-semibold">{f.q}</summary>
+                <p class="mt-2 text-ink/80">{f.a}</p>
+              </details>
+            ))}
+          </>
+        )
+      }
+    </div>
+
+    <SignupForm
+      title={`Watch ${a.code}`}
+      body={`Get an email if the EFSA or FDA position on ${a.name} changes, or when new research is added to this page.`}
+      button="Watch this additive"
+      hook="additive-watch"
+      context={a.code}
+    />
+
+    <div class="flex flex-col items-center justify-between gap-4 rounded-3xl bg-ink p-6 text-white sm:flex-row sm:p-8">
+      <div>
+        <div class="font-display text-lg font-bold">See {a.code} on the label before you buy</div>
+        <p class="mt-1 text-sm text-white/75">EatMatrix reads any ingredient list with your camera and flags every additive instantly.</p>
+      </div>
+      <a href={links.appStore} class="rounded-full bg-brand px-5 py-2.5 font-semibold whitespace-nowrap text-ink">Get the app</a>
+    </div>
+
+    <p class="mt-8 text-xs text-muted">
+      This page summarises publicly available regulatory assessments and research. It is general information, not medical
+      advice. Sources: EFSA, FDA, WHO and the studies linked above.
+    </p>
+  </article>
+</Page>

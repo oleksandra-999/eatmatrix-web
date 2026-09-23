@@ -1,0 +1,17 @@
+---
+import { verdictLabel, type Verdict } from '../../lib/additives';
+
+interface Props {
+  verdict: Verdict;
+  size?: 'sm' | 'lg';
+}
+const { verdict, size = 'sm' } = Astro.props;
+---
+
+<span
+  class:list={[
+    'inline-flex shrink-0 items-center gap-1.5 rounded-full border font-semibold whitespace-nowrap',
+    `verdict-${verdict}`,
+    size === 'lg' ? 'px-4 py-1.5 text-base' : 'px-2.5 py-0.5 text-xs',
+  ]}><span class="inline-block size-2 rounded-full bg-current"></span>{verdictLabel[verdict]}</span
+>
